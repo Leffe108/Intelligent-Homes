@@ -3,6 +3,7 @@
  */
 
 var TOOLBAR_BTN_PADDING = 4;
+var ANIMATION_MAX_TIME = 2.0;
 
 /**
  * Creates an animation.
@@ -18,18 +19,30 @@ function Animation(image, start_x, start_y) {
 }
 
 function UpdateAnimations(time) {
-	var MAX_TIME = 3.0;
 	for(var i = 0; i < g_animations.length; i++) {
 		var animation = g_animations[i];
 		animation.timer += time;
-		if (animation.timer > MAX_TIME) {
+		if (animation.timer > ANIMATION_MAX_TIME) {
 			g_animations.splice(i, 1);
 			i--;
 		} else {
 			var N_ROTATIONS = 1;
 			animation.y -= time * 15.0;
-			animation.angle = animation.timer * N_ROTATIONS * Math.PI*2 / MAX_TIME;
+			animation.angle = animation.timer * N_ROTATIONS * Math.PI*2 / ANIMATION_MAX_TIME;
 		}
+	}
+}
+
+/**
+ * Draws all Animations
+ */
+function DrawAnimations() {
+	for(var i = 0; i < g_animations.length; i++) {
+		var animation = g_animations[i];
+		var start_alpha = 0.5;
+		g_context.globalAlpha = start_alpha * (ANIMATION_MAX_TIME - animation.timer) / (ANIMATION_MAX_TIME);
+		DrawImage(animation.image, animation.x, animation.y, animation.angle);
+		g_context.globalAlpha = 1.0;
 	}
 }
 
@@ -124,6 +137,14 @@ function OnToolbarButton(button) {
 }
 
 /**
+ * Is the current cursor mode allowed on given
+ * building?
+ */
+function AllowCursorOnBuilding(building, mode) {
+	return building.type != "hq" || mode != "new_customer";
+}
+
+/**
  * Cursor click on buildings
  */
 function DrawCursor() {
@@ -132,7 +153,7 @@ function DrawCursor() {
 
 	for(var i = 0; i < g_town_buildings.length; i++) {
 		var building = g_town_buildings[i];
-		if (building.hoover) {
+		if (building.hoover && AllowCursorOnBuilding(building, g_cursor_mode)) {
 			DrawImage("gui_" + g_cursor_mode, building.x, building.y);
 		}
 	}
@@ -149,7 +170,7 @@ function UpdateCursor() {
 		var building = g_town_buildings[i];
 		building.hoover = IsInBox(g_mouse_x, g_mouse_y, building.x - 16, building.y - 16, 32, 32);
 
-		if (g_cursor_mode != "" && building.hoover && 0 in g_mouse_down) {
+		if (g_cursor_mode != "" && building.hoover && 0 in g_mouse_down && AllowCursorOnBuilding(building, g_cursor_mode)) {
 			g_animations.push(new Animation("gui_" + g_cursor_mode, building.x, building.y));
 			delete g_mouse_down[0];
 			var mode = g_cursor_mode;

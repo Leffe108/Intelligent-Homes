@@ -57,6 +57,8 @@ function LoadImages() {
 		background: LoadImage("background", 0, 0),
 		house_home: LoadImage("house_home", 16, 16),
 		house_work: LoadImage("house_work", 16, 16),
+		house_hq: LoadImage("house_hq", 16, 16),
+		customer_star: LoadImage("customer_star", 16, 16),
 		person: LoadImage("person", 16, 32),
 		van: LoadImage("van", 16, 32),
 
@@ -172,10 +174,15 @@ function Render() {
 			image_name = "house_home";
 		} else if (building.type == "work") {
 			image_name = "house_work";
+		} else if (building.type == "hq") {
+			image_name = "house_hq";
 		} else {
 			throw new Exception("Bad house type");
 		}
 		DrawImage(image_name, building.x, building.y);
+		if (building.customer) {
+			DrawImage('customer_star', building.x, building.y);
+		}
 	}
 
 	// Draw people
@@ -187,10 +194,7 @@ function Render() {
 	}
 
 	// Draw animations
-	for(var i = 0; i < g_animations.length; i++) {
-		var animation = g_animations[i];
-		DrawImage(animation.image, animation.x, animation.y, animation.angle);
-	}
+	DrawAnimations();
 
 	// Draw GUI
 	DrawToolbar();
