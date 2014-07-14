@@ -9,7 +9,9 @@ function Building(type, loc) {
 	this.x = loc.x;
 	this.y = loc.y;
 	this.fridge = new Fridge();
+	this.fridge.capacity = 10;
 	this.customer = false; // Is customer of player company?
+	this.hoover = false; // is mouse hovering over building?
 }
 
 /**
@@ -34,20 +36,24 @@ function GetRandomBuilding(type) {
  */
 function GenerateBuildings() {
 	g_town_buildings.push(new Building("home", {
-		x: 16,
-		y: 16 + 32,
-	}));
-	g_town_buildings.push(new Building("home", {
 		x: 16 + 2 * 32,
-		y: 16 + 32,
+		y: 16 + 2 * 32,
 	}));
 	g_town_buildings.push(new Building("home", {
 		x: 16 + 4 * 32,
-		y: 16 + 32,
+		y: 16 + 2 * 32,
 	}));
 	g_town_buildings.push(new Building("home", {
 		x: 16 + 6 * 32,
-		y: 16 + 32,
+		y: 16 + 2 * 32,
+	}));
+	g_town_buildings.push(new Building("home", {
+		x: 16 + 8 * 32,
+		y: 16 + 2 * 32,
+	}));
+	g_town_buildings.push(new Building("home", {
+		x: 16 + 10 * 32,
+		y: 16 + 2 * 32,
 	}));
 	g_town_buildings.push(new Building("work", {
 		x: 16 + 5 * 32,
@@ -72,8 +78,13 @@ function UpdateBuildings(time) {
 			var last_time = g_simulation_time - time;
 			if (Math.floor(time / (60 * 4)) != Math.floor(last_time / (60 * 4))) {
 				// New 4 hour period => fill fridge
-				FillFridge(building.fridge, building.type == "work" ? 50 : 10);
+				FillFridge(building.fridge, building.fridge.capacity);
 			}
 		}
 	}
+}
+
+function NewCustomer(building) {
+	building.customer = true;
+	building.fridge.capacity = 10;
 }

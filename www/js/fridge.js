@@ -10,6 +10,7 @@
  */
 function Fridge() {
 	this.storage = {};
+	this.capacity = 0;
 
 	// Add keys for all ingredients to storage.
 	// Initiate as empty fridge.
@@ -23,6 +24,8 @@ function Fridge() {
 
 /**
  * Fill up fridge to at least minContent of each ingredient.
+ * This method doesn't care about the fridge capacity. Take care
+ * to cap minContent against fridge.capacity if that is desired.
  */
 function FillFridge(fridge, minContent) {
 	for(var ingredient_name in fridge.storage) {

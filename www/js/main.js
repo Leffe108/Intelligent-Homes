@@ -7,10 +7,17 @@ var g_town_buildings = null; // list of buildings
 var g_people = null; // list of Person
 var g_ingredients = null;
 var g_animations = null;
+var g_toolbar = null; // gui toolbar
+var g_open_windows = null; // gui open windows
+var g_cursor_mode = null;
 var g_simulation_time = null; // unit: minutes (total 24*60 a day)
 var g_simulation_day = null; // day counter
 var g_last_loop = null;
 var g_game_speed = null;
+var g_keys_down = null;
+var g_mouse_down = null;
+var g_mouse_x = null;
+var g_mouse_y = null;
 
 // Methods
 requestAnimationFrame = null;
@@ -64,7 +71,35 @@ function LoadImages() {
 		beans: LoadImage("beans", 16, 16),
 
 		salad: LoadImage("salad", 16, 16),
+
+		// GUI
+		gui_new_customer: LoadImage("gui_new_customer", 16, 16),
+		gui_new_equipment: LoadImage("gui_new_equipment", 16, 16),
 	}
+}
+
+function InitInput() {
+	// Listen to keyboard and mouse events
+	g_keys_down = {};
+	g_mouse_down = {};
+	g_mouse_x = 0;
+	g_mouse_y = 0;
+	addEventListener("keydown", function (e) {
+		g_keys_down[e.keyCode] = true;
+	}, false);
+	addEventListener("keyup", function (e) {
+		delete g_keys_down[e.keyCode];
+	}, false);
+	addEventListener("mousedown", function (e) {
+		g_mouse_down[e.button] = true;
+	}, false);
+	addEventListener("mouseup", function (e) {
+		delete g_mouse_down[e.button];
+	}, false);
+	$(g_canvas).mousemove(function(e) {
+		g_mouse_x = e.pageX - this.offsetLeft;
+		g_mouse_y = e.pageY - this.offsetTop;
+	});
 }
 
 function InitGameState()
@@ -96,6 +131,9 @@ function Update(time) {
 	UpdateBuildings(time);
 	UpdatePeople(time);
 	UpdateAnimations(gui_time);
+	UpdateWindows(gui_time);
+	UpdateToolbar(gui_time);
+	UpdateCursor(gui_time);
 }
 
 /**
@@ -154,6 +192,11 @@ function Render() {
 		DrawImage(animation.image, animation.x, animation.y, animation.angle);
 	}
 
+	// Draw GUI
+	DrawToolbar();
+	DrawCursor();
+	DrawWindows();
+
 	// Current time & speed
 	g_context.fillStyle = "rgb(255, 255, 255)";
 	g_context.font = "14px Verdana";
@@ -184,6 +227,7 @@ function Main() {
 function Init() {
 	InitCanvas();
 	LoadImages();
+	InitInput();
 	InitGUI();
 	InitGameState();
 

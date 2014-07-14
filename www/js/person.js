@@ -21,7 +21,7 @@ function Person() {
 function GeneratePeople() {
 	g_people = [];
 
-	var num = 10;
+	var num = 15;
 	var gen = 0;
 	while (gen < num) {
 		var person = new Person();
