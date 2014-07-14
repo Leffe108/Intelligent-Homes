@@ -190,6 +190,7 @@ function OnCursorClick(building, mode) {
 
 		case 'new_equipment':
 			building.fridge.capacity += 10;
+			g_bank_balance -= 1000;
 			g_open_windows.push(new Window('Fridge capacity increased by 10'));
 			break;
 	}

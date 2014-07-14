@@ -18,6 +18,7 @@ var g_keys_down = null;
 var g_mouse_down = null;
 var g_mouse_x = null;
 var g_mouse_y = null;
+var g_bank_balance = null; // amount of money for our company
 
 // Methods
 requestAnimationFrame = null;
@@ -115,6 +116,7 @@ function InitGameState()
 	GenerateBuildings();
 	GeneratePeople();
 	FillAllFridges(10);
+	CompanyInit();
 }
 
 /**
@@ -132,6 +134,8 @@ function Update(time) {
 
 	UpdateBuildings(time);
 	UpdatePeople(time);
+	UpdateCompany(time);
+
 	UpdateAnimations(gui_time);
 	UpdateWindows(gui_time);
 	UpdateToolbar(gui_time);
@@ -161,6 +165,9 @@ function TimeStr(time) {
 	if (h.length < 2) h = "0" + h;
 	if (m.length < 2) m = "0" + m;
 	return h + ":" + m;
+}
+function MoneyStr(amount) {
+	return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 function Render() {
 	DrawImage("background", 0, 0);
@@ -193,13 +200,10 @@ function Render() {
 		}
 	}
 
+	DrawCompany();
+
 	// Draw animations
 	DrawAnimations();
-
-	// Draw GUI
-	DrawToolbar();
-	DrawCursor();
-	DrawWindows();
 
 	// Current time & speed
 	g_context.fillStyle = "rgb(255, 255, 255)";
@@ -207,6 +211,16 @@ function Render() {
 	g_context.textAlign = "left";
 	g_context.textBaseline = "bottom";
 	g_context.fillText("day: " + g_simulation_day + "  time: " + TimeStr(g_simulation_time) + "  speed: " + g_game_speed, 4, g_canvas.height - 4);
+
+	// Bank balance
+	g_context.textAlign = "right";
+	g_context.fillText(MoneyStr(g_bank_balance) + ' bucks', g_canvas.width - 4, g_canvas.height - 4);
+
+	// Draw GUI
+	DrawToolbar();
+	DrawCursor();
+	DrawWindows();
+
 }
 
 // Main game loop
