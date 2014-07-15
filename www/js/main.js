@@ -2,6 +2,7 @@
 // Global variables
 var g_canvas = null;
 var g_context = null;
+var g_logo_timer = null;
 var g_images = null;
 var g_town_buildings = null; // list of buildings
 var g_people = null; // list of Person
@@ -56,6 +57,7 @@ function LoadImage(name, base_x, base_y) {
 function LoadImages() {
 	g_images = {
 		background: LoadImage("background", 0, 0),
+		logo_fridge: LoadImage("logo_fridge", 0, 0),
 		house_home: LoadImage("house_home", 16, 16),
 		house_work: LoadImage("house_work", 16, 16),
 		house_hq: LoadImage("house_hq", 16, 16),
@@ -126,6 +128,16 @@ function Update(time) {
 	var gui_time = time; // GUI time is not affected by speed modifier
 	time *= g_game_speed; // Apply speed modifier
 
+	// Still showing the logo?
+	if (g_logo_timer >= 0) {
+		g_logo_timer += gui_time;
+		if (g_logo_timer > 2.5) {
+			g_logo_timer = -1;
+		} else {
+			return; // continue to show logo - don't update game state
+		}
+	}
+
 	g_simulation_time += time; // one second = one in-game minute
 	while (g_simulation_time > 24 * 60) {
 		g_simulation_time -= 24 * 60;
@@ -170,6 +182,12 @@ function MoneyStr(amount) {
 	return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 function Render() {
+	// Should logo be displayed?
+	if (g_logo_timer >= 0) {
+		DrawImage("logo_fridge", 0, 0);
+		return;
+	}
+
 	DrawImage("background", 0, 0);
 
 	// Draw town buildings
@@ -243,6 +261,7 @@ function Main() {
 
 
 function Init() {
+	g_logo_timer = 0;
 	InitCanvas();
 	LoadImages();
 	InitInput();
