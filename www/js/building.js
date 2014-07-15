@@ -91,4 +91,5 @@ function UpdateBuildings(time) {
 function NewCustomer(building) {
 	building.customer = true;
 	building.fridge.capacity = 10;
+	g_animations.push(new Animation("gui_new_customer", building.x, building.y));
 }

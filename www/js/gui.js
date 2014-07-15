@@ -4,6 +4,12 @@
 
 var TOOLBAR_BTN_PADDING = 4;
 var ANIMATION_MAX_TIME = 2.0;
+var GUI_FONT_SIZE = 14;
+var DO_IT_OFFSET = 320;
+
+var SELL_25_COST = 1000;
+var SELL_50_COST = 2000;
+var SELL_75_COST = 4000;
 
 /**
  * Creates an animation.
@@ -170,12 +176,17 @@ function UpdateCursor() {
 		var building = g_town_buildings[i];
 		building.hoover = IsInBox(g_mouse_x, g_mouse_y, building.x - 16, building.y - 16, 32, 32);
 
-		if (g_cursor_mode != "" && building.hoover && 0 in g_mouse_down && AllowCursorOnBuilding(building, g_cursor_mode)) {
-			g_animations.push(new Animation("gui_" + g_cursor_mode, building.x, building.y));
-			delete g_mouse_down[0];
-			var mode = g_cursor_mode;
-			g_cursor_mode = "";
-			OnCursorClick(building, mode);
+		if (building.hoover && 0 in g_mouse_down) {
+			if (g_cursor_mode != "" && AllowCursorOnBuilding(building, g_cursor_mode)) {
+				g_animations.push(new Animation("gui_" + g_cursor_mode, building.x, building.y));
+				delete g_mouse_down[0];
+				var mode = g_cursor_mode;
+				g_cursor_mode = "";
+				OnCursorClick(building, mode);
+			} else  if(g_cursor_mode == "") {
+				ShowWindow(GetBuildingWindow(building));
+				delete g_mouse_down[0];
+			}
 		}
 	}
 }
@@ -201,11 +212,65 @@ function OnCursorClick(building, mode) {
  */
 function Window(caption) {
 	var margin = 64;
+	this.type = 'window';
 	this.x = margin;
 	this.y = margin;
 	this.width = g_canvas.width - margin * 2;
 	this.height = g_canvas.height - margin * 2;
-	this.caption = caption;
+	this.widgets = [
+		new WidLabel(caption, 'center'),
+		new WidClose(),
+	];
+}
+
+/*
+ * Factory for building window
+ * Don't call with 'new'
+ */
+function GetBuildingWindow(building) {
+	var w = new Window();
+	w.type = 'building';
+	w.building = building;
+	w.widgets = [];
+	switch (building.type) {
+		case 'hq':
+			w.widgets.push(new WidLabel('Head Quaters of Inteligent Home', 'center'));
+			w.widgets.push(new WidValue('Number of customers', '?'));
+			w.widgets.push(new WidValue('Total daily income', '?'));
+			w.widgets.push(new WidValue('Number of trucks', '?'));
+			w.widgets.push(new WidValue('Total daily running costs', '?'));
+			break;
+
+		case 'home':
+		case 'work':
+			w.widgets.push(new WidLabel(StrFirstToUpper(building.type), 'center')),
+			w.widgets.push(new WidValue(building.type == 'home' ? 'Inhabitants' : 'Workers', '?'));
+			w.widgets.push(new WidValue('Customer', building.customer ? 'Yes' : 'No'));
+			if (building.customer) {
+				w.widgets.push(new WidValue('Daily payment to us', GetBuildingIncome(building)));
+				w.widgets.push(new WidValue('Fridge capacity', building.fridge.capacity));
+				w.widgets.push(new WidLabel('', 'left')); // spacer
+				w.widgets.push(new WidCostAction('Buy another fridge', MoneyStr(1000), 'buy_fridge'));
+				w.widgets.push(new WidValueEdit('Truck fill', '100 %', 'truck_fill'));
+			} else {
+				w.widgets.push(new WidLabel('', 'left')); // spacer
+				w.widgets.push(new WidLabel('Send out a seller', 'left'));
+				w.widgets.push(new WidCostAction('25 % success', MoneyStr(SELL_25_COST), 'seller_25'));
+				w.widgets.push(new WidCostAction('50 % success', MoneyStr(SELL_50_COST), 'seller_50'));
+				w.widgets.push(new WidCostAction('75 % success', MoneyStr(SELL_75_COST), 'seller_75'));
+			}
+			break;
+	}
+	w.widgets.push(new WidClose());
+	return w;
+}
+
+/**
+ * Show a window
+ */
+function ShowWindow(w) {
+	LayoutWidgets(w);
+	g_open_windows.push(w);
 }
 
 /**
@@ -215,24 +280,236 @@ function DrawWindows() {
 	for (var i = 0; i < g_open_windows.length; i++) {
 		var w = g_open_windows[i];
 		DrawRect('white', 'black', w.x, w.y, w.width, w.height);
-		
-		var text_size = 14;
-		g_context.font = text_size + "px Verdana";
-		g_context.textAlign = "center";
-		g_context.textBaseline = "center";
-		g_context.fillStyle = 'black';
-		g_context.fillText(w.caption, w.x + w.width/2, w.y + w.height/2 - text_size/2);
 
-		g_context.textBaseline = "bottom";
-		g_context.fillText('Click to close', w.x + w.width/2, w.y + w.height - 8);
+		for (var iwid = 0; iwid < w.widgets.length; iwid++) {
+			DrawWidget(w, w.widgets[iwid]);
+		}
 	}
 
 }
 
 function UpdateWindows(gui_time) {
-	// Close window when user clicks
-	if (g_open_windows.length > 0 && 0 in g_mouse_down) {
+	for (var i = g_open_windows.length - 1; i >= 0; i--) {
+		var w = g_open_windows[i];
+		for (var iwid = 0; iwid < w.widgets.length; iwid++) {
+			UpdateWidget(w, w.widgets[iwid]);
+		}
+	}
+}
+
+/**
+ * @param w Window
+ */
+function LayoutWidgets(w) {
+	var MARGIN = 8;
+	var y = w.y;
+	for (var i = 0; i < w.widgets.length; i++) {
+		var widget = w.widgets[i];
+		var widget_height = GetWidgetHeight(widget);
+		y += MARGIN;
+
+		// Put close widget at bottom
+		if (i == w.widgets.length -1 && widget.type == 'close') {
+			y = Math.max(y, w.y + w.height - widget_height - MARGIN);
+		}
+
+		widget.y = y;
+		widget.x = w.x + MARGIN;
+		widget.width = w.width - 2 * MARGIN;
+		y += widget_height + MARGIN;
+	}
+}
+
+/**
+ * Widgets
+ */
+function Widget() {
+	this.type = 'widget';
+	// x/y/width is managed by the window. Widget can read it.
+	this.x = null;
+	this.y = null;
+	this.width = null;
+}
+
+/** 
+ * Just a label:
+ * <label>
+ * @param align 'center' or 'left'
+ */
+function WidLabel(label, align) {
+	this.type = 'label';
+	this.label = label;
+	this.align = align
+}
+WidLabel.prototype = new Widget();
+
+/** 
+ * Value display:
+ * <label>:    <value>
+ */
+function WidValue(label, value) {
+	this.type = 'value';
+	this.label = label;
+	this.value = value;
+}
+WidValue.prototype = new Widget();
+
+/** 
+ * Value edit:
+ * <label>:    <value> <up/down buttons>
+ *
+ * @param name Logic name
+ */
+function WidValueEdit(label, value, name) {
+	this.type = 'value_edit';
+	this.label = label;
+	this.value = value;
+	this.name = name;
+}
+WidValueEdit.prototype = new Widget();
+
+/** 
+ * Cost Action
+ * <label>   <cost>    <Do it! button>
+ *
+ * @param name Logic name
+ */
+function WidCostAction(label, cost, name) {
+	this.type = 'cost_action';
+	this.label = label;
+	this.cost = cost;
+	this.name = name;
+}
+WidCostAction.prototype = new Widget();
+
+/** 
+ * Close window
+ *            Click to close
+ */
+function WidClose() {
+	this.type = 'close';
+}
+WidClose.prototype = new Widget();
+
+/*** Widget functions ***/
+
+function GetWidgetHeight(widget) {
+	return GUI_FONT_SIZE;
+}
+
+function DrawWidget(w, widget) {
+	g_context.font = GUI_FONT_SIZE + "px Verdana";
+	g_context.textAlign = "left";
+	g_context.textBaseline = "top";
+	g_context.fillStyle = 'black';
+
+	switch(widget.type) {
+		case 'label':
+			if (widget.align == 'center') {
+				g_context.textAlign = "center";
+				g_context.fillText(widget.label, widget.x + widget.width/2, widget.y);
+			} else {
+				g_context.fillText(widget.label, widget.x, widget.y);
+			}
+			break;
+		case 'value':
+			g_context.fillText(widget.label + ':', widget.x, widget.y);
+			g_context.fillText(widget.value, widget.x + 200, widget.y);
+			break;
+		case 'value_edit':
+			break;
+		case 'cost_action':
+			g_context.fillText(widget.label, widget.x, widget.y);
+			g_context.fillText(widget.cost, widget.x + 200, widget.y);
+			var do_it_x = widget.x + DO_IT_OFFSET;
+			var do_it_width = widget.x + widget.width - do_it_x;
+			if (widget.hoover) DrawRect('blue', '', do_it_x, widget.y, do_it_width, GetWidgetHeight(widget));
+			g_context.fillStyle = widget.hoover? 'white' : 'blue';
+			g_context.fillText('Do it!', widget.x + DO_IT_OFFSET, widget.y);
+			break;
+		case 'close':
+			if (widget.hoover) DrawRect('blue', '', widget.x, widget.y, widget.width, GetWidgetHeight(widget));
+			g_context.textAlign = "center";
+			g_context.fillStyle = widget.hoover? 'white' : 'blue';
+			g_context.fillText('Click to close', widget.x + widget.width/2, widget.y);
+	}
+}
+
+/**
+ * Update widget
+ * @param w Window instance
+ * @param widget Widget instance
+ */
+function UpdateWidget(w, widget) {
+	var hoover_widget = IsInBox(g_mouse_x, g_mouse_y, widget.x, widget.y, widget.width, GetWidgetHeight(widget));
+
+	switch(widget.type) {
+		case 'label':
+			// Has no action
+			break;
+		case 'value':
+			// Has no action
+			break;
+		case 'value_edit':
+			break;
+		case 'cost_action':
+			//var do_it_x = widget.x + DO_IT_OFFSET;
+			//var do_it_width = widget.x + widget.width - do_it_x;
+			//widget.hoover = IsInBox(g_mouse_x, g_mouse_x, do_it_x, widget.y, do_it_width, GetWidgetHeight(widget));
+			widget.hoover = hoover_widget;
+			if (widget.hoover && 0 in g_mouse_down) {
+				WidgetAction(w, widget);
+				delete g_mouse_down[0];
+			}
+			break;
+		case 'close':
+			widget.hoover = hoover_widget;
+			if (widget.hoover && 0 in g_mouse_down) {
+				WidgetAction(w, widget);
+				delete g_mouse_down[0];
+			}
+			break;
+	}
+}
+
+/**
+ * Called when a click on a widget (with action) is detected.
+ */
+function WidgetAction(w, widget) {
+	// Close window?
+	if (widget.type == 'close') {
 		g_open_windows.pop();
-		delete g_mouse_down[0]; // handle click
+		return;
+	}
+
+	// Window specific action
+	switch (w.type) {
+		case 'building':
+			switch (widget.name) {
+				case 'buy_fridge':
+					w.building.fridge.capacity += 10;
+					g_bank_balance -= 1000;
+					g_open_windows.pop();
+					ShowWindow(new Window('Fridge capacity increased by 10'));
+					break;
+				case 'truck_fill':
+					break;
+				case 'seller_25':
+					g_bank_balance -= SELL_25_COST;
+					if (Math.random() <= 0.25) NewCustomer(w.building);
+					g_open_windows.pop();
+					break;
+				case 'seller_50':
+					g_bank_balance -= SELL_50_COST;
+					if (Math.random() <= 0.50) NewCustomer(w.building);
+					g_open_windows.pop();
+					break;
+				case 'seller_75':
+					g_bank_balance -= SELL_75_COST;
+					if (Math.random() <= 0.75) NewCustomer(w.building);
+					g_open_windows.pop();
+					break;
+			}
+			break;
 	}
 }

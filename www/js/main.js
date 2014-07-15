@@ -131,7 +131,7 @@ function Update(time) {
 	// Still showing the logo?
 	if (g_logo_timer >= 0) {
 		g_logo_timer += gui_time;
-		if (g_logo_timer > 2.5) {
+		if (g_logo_timer > 0.5) {
 			g_logo_timer = -1;
 		} else {
 			return; // continue to show logo - don't update game state
@@ -149,9 +149,9 @@ function Update(time) {
 	UpdateCompany(time);
 
 	UpdateAnimations(gui_time);
-	UpdateWindows(gui_time);
-	UpdateToolbar(gui_time);
+	//UpdateToolbar(gui_time);
 	UpdateCursor(gui_time);
+	UpdateWindows(gui_time);
 }
 
 /**
@@ -179,7 +179,7 @@ function TimeStr(time) {
 	return h + ":" + m;
 }
 function MoneyStr(amount) {
-	return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' bucks';
 }
 function Render() {
 	// Should logo be displayed?
@@ -232,10 +232,10 @@ function Render() {
 
 	// Bank balance
 	g_context.textAlign = "right";
-	g_context.fillText(MoneyStr(g_bank_balance) + ' bucks', g_canvas.width - 4, g_canvas.height - 4);
+	g_context.fillText(MoneyStr(g_bank_balance), g_canvas.width - 4, g_canvas.height - 4);
 
 	// Draw GUI
-	DrawToolbar();
+	//DrawToolbar();
 	DrawCursor();
 	DrawWindows();
 

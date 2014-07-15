@@ -22,3 +22,8 @@ function DrawRect(fillStyle, strokeStyle, x, y, width, height) {
 		g_context.stroke();
 	}
 }
+
+function StrFirstToUpper(string) {
+	return string.substr(0, 1).toLocaleUpperCase() +
+		string.substr(1);
+}
