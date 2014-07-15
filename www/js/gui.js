@@ -234,7 +234,7 @@ function GetBuildingWindow(building) {
 	w.widgets = [];
 	switch (building.type) {
 		case 'hq':
-			w.widgets.push(new WidLabel('Head Quaters of Inteligent Home', 'center'));
+			w.widgets.push(new WidLabel('Head Quaters of Intelligent Home', 'center'));
 			w.widgets.push(new WidValue('Number of customers', '?'));
 			w.widgets.push(new WidValue('Total daily income', '?'));
 			w.widgets.push(new WidValue('Number of trucks', '?'));
