@@ -196,7 +196,12 @@ function Render() {
 		return;
 	}
 
-	DrawImage("background", 0, 0);
+	// Draw background
+	for (var y = 0; y < g_canvas.width; y += 32) {
+		for (var x = 0; x < g_canvas.width; x += 32) {
+			DrawImage("background", x, y);
+		}
+	}
 
 	DrawBuildings();
 	DrawPeople();
