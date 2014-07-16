@@ -17,6 +17,7 @@ var g_simulation_time = null; // unit: minutes (total 24*60 a day)
 var g_simulation_day = null; // day counter
 var g_last_loop = null;
 var g_game_speed = null;
+var g_game_paused = null;
 var g_keys_down = null;
 var g_mouse_down = null;
 var g_mouse_x = null;
@@ -118,6 +119,7 @@ function InitGameState()
 	g_simulation_time = 0;
 	g_simulation_day = 0;
 	g_game_speed = 30.0;
+	g_game_paused = true;
 	g_town_buildings = [];
 
 	InitFood();
@@ -145,17 +147,22 @@ function Update(time) {
 		}
 	}
 
-	g_simulation_time += time; // one second = one in-game minute
-	while (g_simulation_time > 24 * 60) {
-		g_simulation_time -= 24 * 60;
-		g_simulation_day++;
+	// Progress game time unless paused
+	g_game_paused = IsIntroWindowOpen();
+	if (!g_game_paused) {
+		g_simulation_time += time; // one second = one in-game minute
+		while (g_simulation_time > 24 * 60) {
+			g_simulation_time -= 24 * 60;
+			g_simulation_day++;
+		}
+
+		UpdateBuildings(time);
+		UpdatePeople(time);
+		UpdateTrucks(time);
+		UpdateCompany(time);
 	}
 
-	UpdateBuildings(time);
-	UpdatePeople(time);
-	UpdateTrucks(time);
-	UpdateCompany(time);
-
+	// Always update GUI
 	UpdateAnimations(gui_time);
 	//UpdateToolbar(gui_time);
 	UpdateCursor(gui_time);
@@ -216,7 +223,7 @@ function Render() {
 	g_context.font = "14px Verdana";
 	g_context.textAlign = "left";
 	g_context.textBaseline = "bottom";
-	g_context.fillText("day: " + g_simulation_day + "  time: " + TimeStr(g_simulation_time) + "  speed: " + g_game_speed, 4, g_canvas.height - 4);
+	g_context.fillText("day: " + g_simulation_day + "  time: " + TimeStr(g_simulation_time) + "  speed: " + (g_game_paused ? 'paused' : g_game_speed), 4, g_canvas.height - 4);
 
 	// Bank balance
 	g_context.textAlign = "right";
@@ -226,6 +233,16 @@ function Render() {
 	//DrawToolbar();
 	DrawCursor();
 	DrawWindows();
+
+	if (IsIntroWindowOpen()) {
+		var x = g_canvas.width / 2 - GetIngredientCount() * 32 / 2;
+		for(var ingredient_name in g_ingredients) {
+			if(g_ingredients.hasOwnProperty(ingredient_name)) {
+				DrawImage(ingredient_name, x, 32);
+				x += 32;
+			}
+		}
+	}
 
 }
 

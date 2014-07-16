@@ -76,6 +76,15 @@ function InitGUI() {
 	];
 	g_open_windows = [];
 	g_cursor_mode = "";
+
+	ShowWindow(GetIntoWindow());
+}
+
+/**
+ * Is the intro window open?
+ */
+function IsIntroWindowOpen() {
+	return g_open_windows.length > 0 && g_open_windows[0].type == 'intro';
 }
 
 /**
@@ -272,6 +281,32 @@ function GetBuildingWindow(building) {
 			break;
 	}
 	w.widgets.push(new WidClose());
+	return w;
+}
+
+/*
+ * Factory for intro window
+ * Don't call with 'new'
+ */
+function GetIntoWindow() {
+	var w = new Window();
+	w.type = 'intro';
+	w.widgets = [
+		new WidLabel('Welcome to Intelligent Home', 'center'),
+		new WidLabel('Objective: Become rich', 'left'),
+		new WidLabel('To earn money, get customers that pay you well.', 'left'),
+		new WidLabel('But watch out that you deliver them a good service,', 'left'),
+		new WidLabel('or your income may turn into loss due to fees for', 'left'),
+		new WidLabel('missing food.', 'left'),
+		new WidSpacer(),
+		new WidLabel('Food?', 'left'),
+		new WidLabel('Yes, our business is to supply people with food in', 'left'),
+		new WidLabel('their fridges. They pay us a daily fee for us to make', 'left'),
+		new WidLabel('sure they have food to eat in the fridge.', 'left'),
+		new WidSpacer(),
+		new WidLabel('Click on buildings to get started', 'left'),
+		new WidClose(),
+	];
 	return w;
 }
 

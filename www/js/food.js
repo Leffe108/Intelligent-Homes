@@ -38,6 +38,19 @@ function InitFood() {
 }
 
 /**
+ * Get number of ingredients in the game
+ */
+function GetIngredientCount() {
+	var count = 0;
+	for(var ingredient_name in g_ingredients) {
+		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+			count++;
+		}
+	}
+	return count;
+}
+
+/**
  * Call new IngredientList() to create a new key=>value list over ingredients
  * @param initial_value Initial value assigned to each key.
  */
