@@ -12,6 +12,8 @@ function Building(type, loc) {
 	this.fridge.capacity = 10;
 	this.customer = false; // Is customer of player company?
 	this.hoover = false; // is mouse hovering over building?
+	this.last_missing_count = -1; // -1 when no customer eating has been done yet, otherwise 0-3.
+	this.today_missing_count = 0;
 }
 
 /**
@@ -49,26 +51,14 @@ function GetNumberOfPeopleForBuilding(building) {
  * Create buildings and store in g_town_buildings
  */
 function GenerateBuildings() {
-	g_town_buildings.push(new Building("home", {
-		x: 16 + 2 * 32,
-		y: 16 + 2 * 32,
-	}));
-	g_town_buildings.push(new Building("home", {
-		x: 16 + 4 * 32,
-		y: 16 + 2 * 32,
-	}));
-	g_town_buildings.push(new Building("home", {
-		x: 16 + 6 * 32,
-		y: 16 + 2 * 32,
-	}));
-	g_town_buildings.push(new Building("home", {
-		x: 16 + 8 * 32,
-		y: 16 + 2 * 32,
-	}));
-	g_town_buildings.push(new Building("home", {
-		x: 16 + 10 * 32,
-		y: 16 + 2 * 32,
-	}));
+	for (var y = 2; y <= 4; y+=2) {
+		for (var x = 2; x <= 10; x+= 2) {
+			g_town_buildings.push(new Building("home", {
+				x: 16 + x * 32,
+				y: 16 + y * 32,
+			}));
+		}
+	}
 	g_town_buildings.push(new Building("work", {
 		x: 16 + 5 * 32,
 		y: 16 + 10 * 32,
@@ -101,6 +91,8 @@ function UpdateBuildings(time) {
 			}
 		}
 	}
+
+	// Building income is in company.js
 }
 
 /**
@@ -122,7 +114,9 @@ function DrawBuildings() {
 		}
 		DrawImage(image_name, building.x, building.y);
 		if (building.customer) {
-			DrawImage('customer_star', building.x, building.y);
+			var images = ['customer_good', 'customer_missing1', 'customer_missing2', 'customer_missing3'];
+			var image = building.last_missing_count == -1 ? 'customer_star' : images[building.last_missing_count];
+			DrawImage(image, building.x, building.y);
 
 			// Draw fridge bars for customers
 			var stats = GetFridgeMealPartSums(building.fridge);
@@ -147,4 +141,14 @@ function NewCustomer(building) {
 	building.customer = true;
 	building.fridge.capacity = 10;
 	g_animations.push(new Animation("gui_new_customer", building.x, building.y));
+}
+
+function AbortCustomer(building) {
+	// Take todays fees
+	g_bank_balance -= GetBuildingFee(building);
+
+	// Make no longer customer
+	building.customer = false;
+	building.last_missing_count = -1;
+	building.today_missing_count = 0;
 }

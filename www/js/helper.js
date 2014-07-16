@@ -3,6 +3,15 @@
  */
 
 /**
+ * From: http://stackoverflow.com/a/15313435
+ */
+function assert(condition, message) {
+    if (!condition) {
+        throw message || "Assertion failed";
+    }
+}
+
+/**
  * Check if x,y is inside given boundary box
  */
 function IsInBox(x, y, box_x, box_y, box_width, box_height) {

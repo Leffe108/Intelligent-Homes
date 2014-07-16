@@ -238,6 +238,7 @@ function GetBuildingWindow(building) {
 			w.widgets.push(new WidLabel('Head Quaters of Intelligent Home', 'center'));
 			w.widgets.push(new WidValue('Number of customers', GetNumberOfCustomers()));
 			w.widgets.push(new WidValue('Total daily income', GetTotalDailyIncome()));
+			w.widgets.push(new WidValue('Total fees today', GetTotalFeesToday()));
 			w.widgets.push(new WidValue('Number of trucks', g_trucks.length));
 			w.widgets.push(new WidValue('Total daily running costs', '?'));
 			w.widgets.push(new WidCostAction('Buy another truck', MoneyStr(BUY_TRUCK_COST), 'buy_truck'));
@@ -249,18 +250,24 @@ function GetBuildingWindow(building) {
 			w.widgets.push(new WidValue(building.type == 'home' ? 'Inhabitants' : 'Workers', GetNumberOfPeopleForBuilding(building)));
 			w.widgets.push(new WidValue('Customer', building.customer ? 'Yes' : 'No'));
 			if (building.customer) {
-				w.widgets.push(new WidValue('Daily payment to us', GetBuildingIncome(building)));
+				w.widgets.push(new WidValue('Daily payment to us', MoneyStr(GetBuildingIncome(building))));
+				w.widgets.push(new WidValue('Today missing food fees', MoneyStr(GetBuildingFee(building))));
 				w.widgets.push(new WidValue('Fridge capacity', building.fridge.capacity));
-				w.widgets.push(new WidLabel('', 'left')); // spacer
+				w.widgets.push(new WidSpacer());
 				w.widgets.push(new WidCostAction('Buy another fridge', MoneyStr(1000), 'buy_fridge'));
+				w.widgets.push(new WidCostAction('Abort customer contract', MoneyStr(0), 'abort_customer'));
 				w.widgets.push(new WidValueEdit('Min empty for order', '50 %', 'truck_fill'));
 				w.widgets.push(new WidValueEdit('Truck fill', '100 %', 'truck_fill'));
 			} else {
-				w.widgets.push(new WidLabel('', 'left')); // spacer
+				w.widgets.push(new WidSpacer());
 				w.widgets.push(new WidLabel('Send out a seller', 'left'));
 				w.widgets.push(new WidCostAction('25 % success', MoneyStr(SELL_25_COST), 'seller_25'));
 				w.widgets.push(new WidCostAction('50 % success', MoneyStr(SELL_50_COST), 'seller_50'));
 				w.widgets.push(new WidCostAction('100 % success', MoneyStr(SELL_100_COST), 'seller_100'));
+				w.widgets.push(new WidSpacer());
+				w.widgets.push(new WidLabel('If the seller succeeds you get:', 'left'));
+				w.widgets.push(new WidValue('Daily income', MoneyStr(GetBuildingIncome(building))));
+				w.widgets.push(new WidLabel('Minus fees if you fail to deliver', 'left'));
 			}
 			break;
 	}
@@ -304,7 +311,7 @@ function UpdateWindows(gui_time) {
  * @param w Window
  */
 function LayoutWidgets(w) {
-	var MARGIN = 8;
+	var MARGIN = 6;
 	var y = w.y;
 	for (var i = 0; i < w.widgets.length; i++) {
 		var widget = w.widgets[i];
@@ -394,9 +401,18 @@ function WidClose() {
 }
 WidClose.prototype = new Widget();
 
+/** 
+ * Spacer
+ */
+function WidSpacer() {
+	this.type = 'spacer';
+}
+WidSpacer.prototype = new Widget();
+
 /*** Widget functions ***/
 
 function GetWidgetHeight(widget) {
+	if (widget.type == 'spacer') return 0; // Widget margin still give enough spacing
 	return GUI_FONT_SIZE;
 }
 
@@ -505,6 +521,10 @@ function WidgetAction(w, widget) {
 						g_open_windows.pop();
 						ShowWindow(new Window('A new shiny truck is now available at your HQ.'));
 					}
+					break;
+				case 'abort_customer':
+					AbortCustomer(w.building);
+					g_open_windows.pop();
 					break;
 				case 'truck_fill':
 					break;

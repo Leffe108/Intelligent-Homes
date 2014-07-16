@@ -64,6 +64,10 @@ function LoadImages() {
 		house_work: LoadImage("house_work", 16, 16),
 		house_hq: LoadImage("house_hq", 16, 16),
 		customer_star: LoadImage("customer_star", 16, 16),
+		customer_good: LoadImage("customer_good", 16, 16),
+		customer_missing1: LoadImage("customer_missing1", 16, 16),
+		customer_missing2: LoadImage("customer_missing2", 16, 16),
+		customer_missing3: LoadImage("customer_missing3", 16, 16),
 		person: LoadImage("person", 16, 32),
 		truck: LoadImage("truck", 16, 32),
 

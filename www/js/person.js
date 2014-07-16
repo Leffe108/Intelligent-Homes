@@ -22,7 +22,7 @@ function Person() {
 function GeneratePeople() {
 	g_people = [];
 
-	var num = 15;
+	var num = 35;
 	var gen = 0;
 	while (gen < num) {
 		var person = new Person();
@@ -89,22 +89,23 @@ function UpdatePeople(time) {
 
 		// Time to eat?
 		var dinner_time = Math.max(person.time_go_home, 17 + Math.floor(Math.random() * 3) * 60);
+		var n_missing = -1;
 		switch (person.next_meal_of_day) {
 			case MEAL_BREAKFAST:
 				if (g_simulation_time >= person.time_go_to_work - 45 && person.at == "home") {
-					EatFromFridge(person.home.fridge, person);
+					n_missing = EatFromFridge(person.home.fridge, person);
 					person.next_meal_of_day = MEAL_LUNCH;
 				}
 				break;
 			case MEAL_LUNCH:
 				if (g_simulation_time < Math.min(12 * 60, person.time_go_home - 30) && person.at == "work") {
-					EatFromFridge(person.work.fridge, person);
+					n_missing = EatFromFridge(person.work.fridge, person);
 					person.next_meal_of_day = MEAL_DINNER;
 				}
 				break;
 			case MEAL_DINNER:
 				if (g_simulation_time >= dinner_time && person.at == "home") {
-					EatFromFridge(person.home.fridge, person);
+					n_missing = EatFromFridge(person.home.fridge, person);
 					person.next_meal_of_day = MEAL_NONE;
 				}
 				break;
@@ -116,6 +117,14 @@ function UpdatePeople(time) {
 				}
 				break;
 		}
+		// Update building with last missing meal parts
+		if (n_missing != -1) {
+			var building = person.at == "home"? person.home : person.work;
+			assert(person.at == "home" || person.at == "work");
+			building.last_missing_count = n_missing;
+			building.today_missing_count += n_missing;
+		}
+
 	}
 }
 

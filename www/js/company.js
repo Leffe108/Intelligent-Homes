@@ -7,7 +7,12 @@ function CompanyInit() {
 }
 
 function GetBuildingIncome(building) {
-	return building.type == "work" ? 300 : 100;
+	return (building.type == "work" ? 30 : 10) * GetNumberOfPeopleForBuilding(building);
+}
+
+/** Fee for missing meal parts */
+function GetBuildingFee(building) {
+	return building.today_missing_count * 10;
 }
 
 function GetNumberOfCustomers() {
@@ -24,6 +29,15 @@ function GetTotalDailyIncome() {
 	for (var i = 0; i < g_town_buildings.length; i++) {
 		var building = g_town_buildings[i];
 		if (building.customer) tot += GetBuildingIncome(building);
+	}
+	return tot;
+}
+
+function GetTotalFeesToday() {
+	var tot = 0;
+	for (var i = 0; i < g_town_buildings.length; i++) {
+		var building = g_town_buildings[i];
+		if (building.customer) tot += GetBuildingFee(building);
 	}
 	return tot;
 }
@@ -51,7 +65,9 @@ function UpdateCompany(time) {
 			var building = g_town_buildings[i];
 
 			if (building.customer) {
-				g_bank_balance += GetBuildingIncome(building);
+				var balance = GetBuildingIncome(building) - GetBuildingFee(building);
+				g_bank_balance += balance;
+				building.today_missing_count = 0; // reset daily fee
 			}
 		}
 	}

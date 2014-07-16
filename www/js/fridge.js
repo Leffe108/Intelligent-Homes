@@ -45,7 +45,7 @@ function FillAllFridges(minContent) {
  * Make given person eat a meal using food from given
  * fridge. This method reduce the fridge content.
  *
- * @return void
+ * @return number of missing meal parts (0 to 3)
  */
 function EatFromFridge(fridge, person) {
 
@@ -86,8 +86,12 @@ function EatFromFridge(fridge, person) {
 	dish[MEAL_PART_2] = PickIngredient(MEAL_PART_2);
 	dish[MEAL_PART_SALAD] = PickIngredient(MEAL_PART_SALAD);
 
-	// TODO: make person less satisfied if the dish is missing out 1-3 of the parts.
-	// Especially if all is missing.
+	var result = 0;
+	if (dish[MEAL_PART_1] == null) result++;
+	if (dish[MEAL_PART_2] == null) result++;
+	if (dish[MEAL_PART_SALAD] == null) result++;
+
+	return result;
 }
 
 /**
