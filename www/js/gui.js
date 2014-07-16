@@ -235,8 +235,8 @@ function GetBuildingWindow(building) {
 	switch (building.type) {
 		case 'hq':
 			w.widgets.push(new WidLabel('Head Quaters of Intelligent Home', 'center'));
-			w.widgets.push(new WidValue('Number of customers', '?'));
-			w.widgets.push(new WidValue('Total daily income', '?'));
+			w.widgets.push(new WidValue('Number of customers', GetNumberOfCustomers()));
+			w.widgets.push(new WidValue('Total daily income', GetTotalDailyIncome()));
 			w.widgets.push(new WidValue('Number of trucks', '?'));
 			w.widgets.push(new WidValue('Total daily running costs', '?'));
 			break;
@@ -244,13 +244,14 @@ function GetBuildingWindow(building) {
 		case 'home':
 		case 'work':
 			w.widgets.push(new WidLabel(StrFirstToUpper(building.type), 'center')),
-			w.widgets.push(new WidValue(building.type == 'home' ? 'Inhabitants' : 'Workers', '?'));
+			w.widgets.push(new WidValue(building.type == 'home' ? 'Inhabitants' : 'Workers', GetNumberOfPeopleForBuilding(building)));
 			w.widgets.push(new WidValue('Customer', building.customer ? 'Yes' : 'No'));
 			if (building.customer) {
 				w.widgets.push(new WidValue('Daily payment to us', GetBuildingIncome(building)));
 				w.widgets.push(new WidValue('Fridge capacity', building.fridge.capacity));
 				w.widgets.push(new WidLabel('', 'left')); // spacer
 				w.widgets.push(new WidCostAction('Buy another fridge', MoneyStr(1000), 'buy_fridge'));
+				w.widgets.push(new WidValueEdit('Min empty for order', '50 %', 'truck_fill'));
 				w.widgets.push(new WidValueEdit('Truck fill', '100 %', 'truck_fill'));
 			} else {
 				w.widgets.push(new WidLabel('', 'left')); // spacer
@@ -417,6 +418,10 @@ function DrawWidget(w, widget) {
 			g_context.fillText(widget.value, widget.x + 200, widget.y);
 			break;
 		case 'value_edit':
+			g_context.fillText(widget.label + ':', widget.x, widget.y);
+			g_context.fillText(widget.value, widget.x + 200, widget.y);
+			g_context.fillText('-', widget.x + 270, widget.y);
+			g_context.fillText('+', widget.x + 290, widget.y);
 			break;
 		case 'cost_action':
 			g_context.fillText(widget.label, widget.x, widget.y);

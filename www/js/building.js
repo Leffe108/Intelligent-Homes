@@ -32,6 +32,20 @@ function GetRandomBuilding(type) {
 }
 
 /**
+ * How many people live/work in given building?
+ */
+function GetNumberOfPeopleForBuilding(building) {
+	var count = 0;
+	for (var i = 0; i < g_people.length; i++) {
+		var person = g_people[i];
+		if (person.home == building || person.work == building) {
+			count++;
+		}
+	}
+	return count;
+}
+
+/**
  * Create buildings and store in g_town_buildings
  */
 function GenerateBuildings() {
