@@ -7,9 +7,9 @@ var ANIMATION_MAX_TIME = 2.0;
 var GUI_FONT_SIZE = 14;
 var DO_IT_OFFSET = 320;
 
-var SELL_25_COST = 1000;
-var SELL_50_COST = 2000;
-var SELL_75_COST = 4000;
+var SELL_25_COST = 100;
+var SELL_50_COST = 200;
+var SELL_100_COST = 4000;
 
 /**
  * Creates an animation.
@@ -200,9 +200,10 @@ function OnCursorClick(building, mode) {
 			break;
 
 		case 'new_equipment':
-			building.fridge.capacity += 10;
-			g_bank_balance -= 1000;
-			g_open_windows.push(new Window('Fridge capacity increased by 10'));
+			if (TryBuy(1000)) {
+				building.fridge.capacity += 10;
+				g_open_windows.push(new Window('Fridge capacity increased by 10'));
+			}
 			break;
 	}
 }
@@ -237,8 +238,9 @@ function GetBuildingWindow(building) {
 			w.widgets.push(new WidLabel('Head Quaters of Intelligent Home', 'center'));
 			w.widgets.push(new WidValue('Number of customers', GetNumberOfCustomers()));
 			w.widgets.push(new WidValue('Total daily income', GetTotalDailyIncome()));
-			w.widgets.push(new WidValue('Number of trucks', '?'));
+			w.widgets.push(new WidValue('Number of trucks', g_trucks.length));
 			w.widgets.push(new WidValue('Total daily running costs', '?'));
+			w.widgets.push(new WidCostAction('Buy another truck', MoneyStr(BUY_TRUCK_COST), 'buy_truck'));
 			break;
 
 		case 'home':
@@ -258,7 +260,7 @@ function GetBuildingWindow(building) {
 				w.widgets.push(new WidLabel('Send out a seller', 'left'));
 				w.widgets.push(new WidCostAction('25 % success', MoneyStr(SELL_25_COST), 'seller_25'));
 				w.widgets.push(new WidCostAction('50 % success', MoneyStr(SELL_50_COST), 'seller_50'));
-				w.widgets.push(new WidCostAction('75 % success', MoneyStr(SELL_75_COST), 'seller_75'));
+				w.widgets.push(new WidCostAction('100 % success', MoneyStr(SELL_100_COST), 'seller_100'));
 			}
 			break;
 	}
@@ -492,27 +494,37 @@ function WidgetAction(w, widget) {
 		case 'building':
 			switch (widget.name) {
 				case 'buy_fridge':
-					w.building.fridge.capacity += 10;
-					g_bank_balance -= 1000;
-					g_open_windows.pop();
-					ShowWindow(new Window('Fridge capacity increased by 10'));
+					if (TryBuy(1000)) {
+						w.building.fridge.capacity += 10;
+						g_open_windows.pop();
+						ShowWindow(new Window('Fridge capacity increased by 10'));
+					}
+					break;
+				case 'buy_truck':
+					if (BuyTruck()) {
+						g_open_windows.pop();
+						ShowWindow(new Window('A new shiny truck is now available at your HQ.'));
+					}
 					break;
 				case 'truck_fill':
 					break;
 				case 'seller_25':
-					g_bank_balance -= SELL_25_COST;
-					if (Math.random() <= 0.25) NewCustomer(w.building);
-					g_open_windows.pop();
+					if (TryBuy(SELL_25_COST)) {
+						if (Math.random() <= 0.25) NewCustomer(w.building);
+						g_open_windows.pop();
+					}
 					break;
 				case 'seller_50':
-					g_bank_balance -= SELL_50_COST;
-					if (Math.random() <= 0.50) NewCustomer(w.building);
-					g_open_windows.pop();
+					if (TryBuy(SELL_50_COST)) {
+						if (Math.random() <= 0.50) NewCustomer(w.building);
+						g_open_windows.pop();
+					}
 					break;
-				case 'seller_75':
-					g_bank_balance -= SELL_75_COST;
-					if (Math.random() <= 0.75) NewCustomer(w.building);
-					g_open_windows.pop();
+				case 'seller_100':
+					if (TryBuy(SELL_100_COST)) {
+						NewCustomer(w.building);
+						g_open_windows.pop();
+					}
 					break;
 			}
 			break;

@@ -14,11 +14,7 @@ function Fridge() {
 
 	// Add keys for all ingredients to storage.
 	// Initiate as empty fridge.
-	for(var ingredient_name in g_ingredients) {
-		if(g_ingredients.hasOwnProperty(ingredient_name)) {
-			this.storage[ingredient_name] = 0;
-		}
-	}
+	this.storage = new IngredientList(0);
 }
 
 
@@ -94,4 +90,16 @@ function EatFromFridge(fridge, person) {
 	// Especially if all is missing.
 }
 
-
+/**
+ * Get amount of food missing in fridge
+ * for it to be full.
+ */
+function GetFridgeIngredientSpace(fridge) {
+	var result = new IngredientList(0);
+	for(var ingredient_name in g_ingredients) {
+		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+			result[ingredient_name] = fridge.capacity - fridge.storage[ingredient_name];
+		}
+	}
+	return result;
+}

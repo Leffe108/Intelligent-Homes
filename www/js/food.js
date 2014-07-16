@@ -37,4 +37,24 @@ function InitFood() {
 	};
 }
 
+/**
+ * Call new IngredientList() to create a new key=>value list over ingredients
+ * @param initial_value Initial value assigned to each key.
+ */
+function IngredientList(initial_value) {
+	for(var ingredient_name in g_ingredients) {
+		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+			this[ingredient_name] = initial_value;
+		}
+	}
+}
 
+function GetIngredientListSum(list) {
+	var sum = 0;
+	for(var ingredient_name in g_ingredients) {
+		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+			sum += list[ingredient_name];
+		}
+	}
+	return sum;
+}

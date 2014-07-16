@@ -8,6 +8,7 @@ function Person() {
 	this.y = null;
 	this.target_x = null;
 	this.target_y = null;
+	this.speed = null;
 	// when to go to work/home
 	this.time_go_to_work = null;
 	this.time_go_home = null;
@@ -34,6 +35,7 @@ function GeneratePeople() {
 		person.target_x = person.x;
 		person.target_y = person.y;
 		person.at = "home";
+		person.speed = 5;
 
 		person.time_go_to_work = 6 * 60 + Math.floor(Math.random()*8) * 15;
 		person.time_go_home = person.time_go_to_work + 6 * 60 + Math.floor(Math.random()*4) * 60;
@@ -70,22 +72,7 @@ function UpdatePeople(time) {
 		//
 		// During movement person.x and person.y is float, but
 		// is then changed back to integer when reaching destination.
-		var speed = 5;
-		if (person.target_x != person.x) {
-			if (Math.abs(person.x - person.target_x) < speed * time) {
-				person.x = person.target_x;
-			} else {
-				var delta = person.target_x - person.x > 0 ? 1 : -1;
-				person.x += delta * speed * time;
-			}
-		} if (person.target_y != person.y) {
-			if (Math.abs(person.y - person.target_y) < speed * time) {
-				person.y = person.target_y;
-			} else {
-				var delta = person.target_y - person.y > 0 ? 1 : -1;
-				person.y += delta * speed * time;
-			}
-		}
+		MovementUpdate(person, time);
 
 		// Has just reached the target?
 		if (person.target_x == person.x &&

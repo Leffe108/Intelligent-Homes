@@ -4,8 +4,10 @@ var g_canvas = null;
 var g_context = null;
 var g_logo_timer = null;
 var g_images = null;
-var g_town_buildings = null; // list of buildings
+var g_town_buildings = null; // list of buildings, including HQ
+var g_hq = null; // fast access to HQ
 var g_people = null; // list of Person
+var g_trucks = null; // list of Truck
 var g_ingredients = null;
 var g_animations = null;
 var g_toolbar = null; // gui toolbar
@@ -63,7 +65,7 @@ function LoadImages() {
 		house_hq: LoadImage("house_hq", 16, 16),
 		customer_star: LoadImage("customer_star", 16, 16),
 		person: LoadImage("person", 16, 32),
-		van: LoadImage("van", 16, 32),
+		truck: LoadImage("truck", 16, 32),
 
 		// Food images:
 		pasta: LoadImage("pasta", 16, 16),
@@ -111,7 +113,7 @@ function InitGameState()
 {
 	g_simulation_time = 0;
 	g_simulation_day = 0;
-	g_game_speed = 300.0;
+	g_game_speed = 30.0;
 	g_town_buildings = [];
 
 	InitFood();
@@ -119,6 +121,7 @@ function InitGameState()
 	GeneratePeople();
 	FillAllFridges(10);
 	CompanyInit();
+	TruckInit();
 }
 
 /**
@@ -146,6 +149,7 @@ function Update(time) {
 
 	UpdateBuildings(time);
 	UpdatePeople(time);
+	UpdateTrucks(time);
 	UpdateCompany(time);
 
 	UpdateAnimations(gui_time);
@@ -218,6 +222,7 @@ function Render() {
 		}
 	}
 
+	DrawTrucks();
 	DrawCompany();
 
 	// Draw animations

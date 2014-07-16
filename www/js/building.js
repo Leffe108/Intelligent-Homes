@@ -77,10 +77,11 @@ function GenerateBuildings() {
 		x: 16 + 8 * 32,
 		y: 16 + 7 * 32,
 	}));
-	g_town_buildings.push(new Building("hq", {
+	g_hq = new Building("hq", {
 		x: 16 + 12 * 32,
 		y: 16 + 12 * 32,
-	}));
+	});
+	g_town_buildings.push(g_hq);
 }
 
 /**
