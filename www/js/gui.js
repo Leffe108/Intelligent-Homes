@@ -279,7 +279,7 @@ function ShowWindow(w) {
 function DrawWindows() {
 	for (var i = 0; i < g_open_windows.length; i++) {
 		var w = g_open_windows[i];
-		DrawRect('white', 'black', w.x, w.y, w.width, w.height);
+		DrawRect('rgb(234,234,234)', 'black', w.x, w.y, w.width, w.height);
 
 		for (var iwid = 0; iwid < w.widgets.length; iwid++) {
 			DrawWidget(w, w.widgets[iwid]);
