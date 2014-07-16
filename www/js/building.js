@@ -103,6 +103,30 @@ function UpdateBuildings(time) {
 	}
 }
 
+/**
+ * Draw all buildings
+ */
+function DrawBuildings() {
+	for (var i = 0; i < g_town_buildings.length; i++) {
+		var building = g_town_buildings[i];
+
+		var image_name = null;
+		if (building.type == "home") {
+			image_name = "house_home";
+		} else if (building.type == "work") {
+			image_name = "house_work";
+		} else if (building.type == "hq") {
+			image_name = "house_hq";
+		} else {
+			throw new Exception("Bad house type");
+		}
+		DrawImage(image_name, building.x, building.y);
+		if (building.customer) {
+			DrawImage('customer_star', building.x, building.y);
+		}
+	}
+}
+
 function NewCustomer(building) {
 	building.customer = true;
 	building.fridge.capacity = 10;

@@ -118,3 +118,15 @@ function UpdatePeople(time) {
 		}
 	}
 }
+
+/**
+ * Draw people
+ */
+function DrawPeople() {
+	for (var i = 0; i < g_people.length; i++) {
+		var person = g_people[i];
+		if (person.at == "") { // only draw people outdoors
+			DrawImage("person", person.x, person.y);
+		}
+	}
+}
