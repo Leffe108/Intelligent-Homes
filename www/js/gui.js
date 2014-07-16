@@ -240,7 +240,7 @@ function GetBuildingWindow(building) {
 			w.widgets.push(new WidValue('Total daily income', GetTotalDailyIncome()));
 			w.widgets.push(new WidValue('Total fees today', GetTotalFeesToday()));
 			w.widgets.push(new WidValue('Number of trucks', g_trucks.length));
-			w.widgets.push(new WidValue('Total daily running costs', '?'));
+			//w.widgets.push(new WidValue('Total daily running costs', '?'));
 			w.widgets.push(new WidCostAction('Buy another truck', MoneyStr(BUY_TRUCK_COST), 'buy_truck'));
 			break;
 
@@ -256,8 +256,8 @@ function GetBuildingWindow(building) {
 				w.widgets.push(new WidSpacer());
 				w.widgets.push(new WidCostAction('Buy another fridge', MoneyStr(1000), 'buy_fridge'));
 				w.widgets.push(new WidCostAction('Abort customer contract', MoneyStr(0), 'abort_customer'));
-				w.widgets.push(new WidValueEdit('Min empty for order', '50 %', 'truck_fill'));
-				w.widgets.push(new WidValueEdit('Truck fill', '100 %', 'truck_fill'));
+				//w.widgets.push(new WidValueEdit('Min empty for order', '50 %', 'truck_fill'));
+				//w.widgets.push(new WidValueEdit('Truck fill', '100 %', 'truck_fill'));
 			} else {
 				w.widgets.push(new WidSpacer());
 				w.widgets.push(new WidLabel('Send out a seller', 'left'));
