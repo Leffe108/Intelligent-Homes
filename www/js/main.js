@@ -61,6 +61,7 @@ function LoadImages() {
 	g_images = {
 		background: LoadImage("background", 0, 0),
 		logo_fridge: LoadImage("logo_fridge", 0, 0),
+		game_over: LoadImage("game_over", 0, 0),
 		house_home: LoadImage("house_home", 16, 16),
 		house_work: LoadImage("house_work", 16, 16),
 		house_hq: LoadImage("house_hq", 16, 16),
@@ -140,15 +141,20 @@ function Update(time) {
 	// Still showing the logo?
 	if (g_logo_timer >= 0) {
 		g_logo_timer += gui_time;
-		if (g_logo_timer > 0.5) {
+		if (g_logo_timer > 2.5) {
 			g_logo_timer = -1;
 		} else {
 			return; // continue to show logo - don't update game state
 		}
 	}
 
+	// Restart game if clicking on game over screen
+	if (0 in g_mouse_down && IsGameOver()) {
+		location.reload();
+	}
+
 	// Progress game time unless paused
-	g_game_paused = IsIntroWindowOpen();
+	g_game_paused = IsIntroWindowOpen() || IsGameOver();
 	if (!g_game_paused) {
 		g_simulation_time += time; // one second = one in-game minute
 		while (g_simulation_time > 24 * 60) {
@@ -200,6 +206,9 @@ function Render() {
 	// Should logo be displayed?
 	if (g_logo_timer >= 0) {
 		DrawImage("logo_fridge", 0, 0);
+		return;
+	} else if(IsGameOver()) {
+		DrawImage("game_over", 0, 0);
 		return;
 	}
 

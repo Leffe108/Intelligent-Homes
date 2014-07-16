@@ -56,6 +56,13 @@ function TryBuy(cost) {
 	return false;
 }
 
+/**
+ * Return true if company bank balance is too low.
+ */
+function IsGameOver() {
+	return g_bank_balance < -10000;
+}
+
 function UpdateCompany(time) {
 	var last_time = g_simulation_time - time;
 	if (Math.floor(time / (60 * 24)) != Math.floor(last_time / (60 * 24))) {
