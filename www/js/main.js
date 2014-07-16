@@ -32,6 +32,15 @@ function InitCanvas() {
 	g_context = g_canvas.getContext("2d"); 
 	g_canvas.width = 512;
 	g_canvas.height = 480;
+	g_canvas.style = 
+		"position: absolute;" +
+		"width: 512px;" +
+		"height: 480px;" +
+		"top: 0;" +
+		"bottom: 0;" +
+		"left: 0;" +
+		"right: 0;" +
+		"margin: auto;";
 	document.body.appendChild(g_canvas);
 }
 
