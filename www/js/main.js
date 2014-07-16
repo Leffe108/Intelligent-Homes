@@ -125,7 +125,7 @@ function InitGameState()
 	InitFood();
 	GenerateBuildings();
 	GeneratePeople();
-	FillAllFridges(10);
+	FillAllFridges();
 	CompanyInit();
 	TruckInit();
 }

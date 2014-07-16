@@ -17,27 +17,44 @@ function Fridge() {
 	this.storage = new IngredientList(0);
 }
 
+function GetFridgeIngredientCapacity(fridge, ingredient_name) {
+
+	var part = g_ingredients[ingredient_name].part;
+	var part_capacity = fridge.capacity / 3;
+	if ((part - MEAL_PART_1) <= fridge.capacity % 3) part_capacity++;
+
+	var ingredient_count = GetMealPartIngredientCount(part);
+	var ingredient_capacity = part_capacity / ingredient_count;
+	var ingredient_i = 0;
+	for(var ingredient_name in g_ingredients) {
+		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+			if (g_ingredients[ingredient_name].part == part) {
+				ingredient_i++;
+			}
+		}
+	}
+	if (ingredient_i <= ingredient_capacity % ingredient_count) ingredient_capacity++;
+
+	return ingredient_capacity;
+}
 
 /**
- * Fill up fridge to at least minContent of each ingredient.
- * This method doesn't care about the fridge capacity. Take care
- * to cap minContent against fridge.capacity if that is desired.
+ * Fill up fridge to its capacity.
  */
 function FillFridge(fridge, minContent) {
 	for(var ingredient_name in fridge.storage) {
 		if(fridge.storage.hasOwnProperty(ingredient_name)) {
-			fridge.storage[ingredient_name] = Math.max(fridge.storage[ingredient_name], minContent);
+			fridge.storage[ingredient_name] = GetFridgeIngredientCapacity(fridge, ingredient_name);
 		}
 	}
 }
 
 /**
- * Fill up fridges of all buildings to at least minContent
- * of each ingredient.
+ * Fill up fridges of all buildings to their capacity
  */
 function FillAllFridges(minContent) {
 	for(var i = 0; i < g_town_buildings.length; i++) {
-		FillFridge(g_town_buildings[i].fridge, minContent);
+		FillFridge(g_town_buildings[i].fridge);
 	}
 }
 
@@ -102,7 +119,7 @@ function GetFridgeIngredientSpace(fridge) {
 	var result = new IngredientList(0);
 	for(var ingredient_name in g_ingredients) {
 		if(g_ingredients.hasOwnProperty(ingredient_name)) {
-			result[ingredient_name] = fridge.capacity - fridge.storage[ingredient_name];
+			result[ingredient_name] = GetFridgeIngredientCapacity(fridge, ingredient_name) - fridge.storage[ingredient_name];
 		}
 	}
 	return result;

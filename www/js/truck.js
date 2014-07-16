@@ -81,7 +81,7 @@ function UpdateTrucks(time) {
 
 							// Calc space available in receiving fridge
 							var max_unload = 
-								Math.max(0, building.fridge.capacity -
+								Math.max(0, GetFridgeIngredientCapacity(building.fridge, ingredient_name) -
 								building.fridge.storage[ingredient_name]);
 
 							var unload = Math.min(max_unload, delivery[ingredient_name]);

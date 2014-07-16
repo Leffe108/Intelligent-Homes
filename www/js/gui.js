@@ -267,6 +267,10 @@ function GetBuildingWindow(building) {
 				w.widgets.push(new WidCostAction('Abort customer contract', MoneyStr(0), 'abort_customer'));
 				//w.widgets.push(new WidValueEdit('Min empty for order', '50 %', 'truck_fill'));
 				//w.widgets.push(new WidValueEdit('Truck fill', '100 %', 'truck_fill'));
+				w.widgets.push(new WidSpacer());
+				w.widgets.push(new WidLabel('Yellow bar: pasta, potato and rice', 'left'));
+				w.widgets.push(new WidLabel('Red bar: beans, fish, meatballs and sausages', 'left'));
+				w.widgets.push(new WidLabel('Green bar: sallad', 'left'));
 			} else {
 				w.widgets.push(new WidSpacer());
 				w.widgets.push(new WidLabel('Send out a seller', 'left'));

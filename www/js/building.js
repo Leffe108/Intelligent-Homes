@@ -88,7 +88,7 @@ function UpdateBuildings(time) {
 			var last_time = g_simulation_time - time;
 			if (Math.floor(time / (60 * 4)) != Math.floor(last_time / (60 * 4))) {
 				// New 4 hour period => fill fridge
-				FillFridge(building.fridge, building.fridge.capacity);
+				FillFridge(building.fridge);
 			}
 		}
 	}
@@ -122,7 +122,7 @@ function DrawBuildings() {
 			// Draw fridge bars for customers
 			var stats = GetFridgeMealPartSums(building.fridge);
 			function BarHeight(meal_part) {
-				return stats[meal_part];
+				return Math.max(0, stats[meal_part]);
 			}
 			function BarTop(meal_part) {
 				return building.y + 16 - BarHeight(meal_part);

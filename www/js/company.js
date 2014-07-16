@@ -12,7 +12,7 @@ function GetBuildingIncome(building) {
 
 /** Fee for missing meal parts */
 function GetBuildingFee(building) {
-	return building.today_missing_count * 10;
+	return building.today_missing_count * (building.type == "work" ? 100 : 50);
 }
 
 function GetNumberOfCustomers() {
