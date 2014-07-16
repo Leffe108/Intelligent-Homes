@@ -103,3 +103,30 @@ function GetFridgeIngredientSpace(fridge) {
 	}
 	return result;
 }
+
+/**
+ * Get total ingredient amount of a meal part in a given fridge.
+ */
+function GetFridgeMealPartSum(fridge, meal_part) {
+	var sum = 0;
+	for(var ingredient_name in g_ingredients) {
+		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+			if (g_ingredients[ingredient_name].part == meal_part) {
+				sum += fridge.storage[ingredient_name];
+			}
+		}
+	}
+	return sum;
+}
+
+/**
+ * Get total amount of ingredients of each meal part (MEAL_PART_*).
+ * @return an object with MEAL_PART_* enum value as keys.
+ */
+function GetFridgeMealPartSums(fridge) {
+	var result = {};
+	result[MEAL_PART_1] = GetFridgeMealPartSum(fridge, MEAL_PART_1);
+	result[MEAL_PART_2] = GetFridgeMealPartSum(fridge, MEAL_PART_2);
+	result[MEAL_PART_SALAD] = GetFridgeMealPartSum(fridge, MEAL_PART_SALAD);
+	return result;
+}

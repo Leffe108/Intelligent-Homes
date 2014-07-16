@@ -123,6 +123,22 @@ function DrawBuildings() {
 		DrawImage(image_name, building.x, building.y);
 		if (building.customer) {
 			DrawImage('customer_star', building.x, building.y);
+
+			// Draw fridge bars for customers
+			var stats = GetFridgeMealPartSums(building.fridge);
+			function BarHeight(meal_part) {
+				return stats[meal_part];
+			}
+			function BarTop(meal_part) {
+				return building.y + 16 - BarHeight(meal_part);
+			}
+			var BAR_WIDTH = 4;
+			var x = building.x - 16;
+			DrawRect('yellow', '', x, BarTop(MEAL_PART_1), BAR_WIDTH, BarHeight(MEAL_PART_1));
+			x += BAR_WIDTH;
+			DrawRect('#ff9999', '', x, BarTop(MEAL_PART_2), BAR_WIDTH, BarHeight(MEAL_PART_2));
+			x += BAR_WIDTH;
+			DrawRect('green', '', x, BarTop(MEAL_PART_SALAD), BAR_WIDTH, BarHeight(MEAL_PART_SALAD));
 		}
 	}
 }
