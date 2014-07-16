@@ -25,13 +25,13 @@ function InitFood() {
 
 	g_ingredients = {
 		pasta: new Ingredient("pasta", MEAL_PART_1),
-		rice: new Ingredient("rice", MEAL_PART_1),
 		potato: new Ingredient("potato", MEAL_PART_1),
+		rice: new Ingredient("rice", MEAL_PART_1),
 
-		sausage: new Ingredient("sausage", MEAL_PART_2),
-		meatballs: new Ingredient("meatballs", MEAL_PART_2),
-		fish: new Ingredient("fish", MEAL_PART_2),
 		beans: new Ingredient("beans", MEAL_PART_2),
+		fish: new Ingredient("fish", MEAL_PART_2),
+		meatballs: new Ingredient("meatballs", MEAL_PART_2),
+		sausage: new Ingredient("sausage", MEAL_PART_2),
 
 		salad: new Ingredient("salad", MEAL_PART_SALAD),
 	};
