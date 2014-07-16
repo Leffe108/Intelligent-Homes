@@ -32,7 +32,7 @@ function UpdateAnimations(time) {
 			g_animations.splice(i, 1);
 			i--;
 		} else {
-			var N_ROTATIONS = 1;
+			var N_ROTATIONS = 0.75;
 			animation.y -= time * 15.0;
 			animation.angle = animation.timer * N_ROTATIONS * Math.PI*2 / ANIMATION_MAX_TIME;
 		}
