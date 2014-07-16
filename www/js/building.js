@@ -52,19 +52,20 @@ function GetNumberOfPeopleForBuilding(building) {
  */
 function GenerateBuildings() {
 	for (var y = 2; y <= 4; y+=2) {
-		for (var x = 2; x <= 10; x+= 2) {
+		for (var x = 2; x <= 12; x+= 2) {
 			g_town_buildings.push(new Building("home", {
 				x: 16 + x * 32,
 				y: 16 + y * 32,
 			}));
 		}
 	}
+	var shift_work_left = 16; // avoid high fridge bars of work to run into a house building
 	g_town_buildings.push(new Building("work", {
-		x: 16 + 5 * 32,
+		x: 16 + 5 * 32 - shift_work_left,
 		y: 16 + 10 * 32,
 	}));
 	g_town_buildings.push(new Building("work", {
-		x: 16 + 8 * 32,
+		x: 16 + 8 * 32 - shift_work_left,
 		y: 16 + 7 * 32,
 	}));
 	g_hq = new Building("hq", {
