@@ -72,7 +72,11 @@ function UpdateCompany(time) {
 			var building = g_town_buildings[i];
 
 			if (building.customer) {
-				var balance = GetBuildingIncome(building) - GetBuildingFee(building);
+				var balance = - GetBuildingFee(building);
+				if (building.new_customer_time || Math.floor(time / (60 * 24)) != Math.floor(building.new_customer_time / (60 * 24))) {
+					// Don't give any income if customer contract was aborted (any time) and then signed again today. This is to prevent cheating.
+					balance += GetBuildingIncome(building);
+				}
 				g_bank_balance += balance;
 				building.today_missing_count = 0; // reset daily fee
 			}

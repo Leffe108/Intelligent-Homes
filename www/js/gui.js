@@ -233,6 +233,30 @@ function Window(caption) {
 	];
 }
 
+/**
+ * Get a window with a caption and then
+ * lines of text. 
+ * @param caption String with caption text
+ * @param lines Array of strings. Lines with 0-length string will be rendered as WidSpacer.
+ * @note Don't call with 'new'
+ */
+function GetMessageWindow(caption, lines) {
+	var w = new Window();
+	w.type = 'intro';
+	w.widgets = [
+		new WidLabel(caption, 'center'),
+	];
+	for (var i = 0; i < lines.length; i++) {
+		if (lines[i] == '') {
+			w.widgets.push(new WidSpacer());
+		} else {
+			w.widgets.push(new WidLabel(lines[i], 'left'));
+		}
+	}
+	w.widgets.push(new WidClose());
+	return w;
+}
+
 /*
  * Factory for building window
  * Don't call with 'new'
@@ -247,10 +271,11 @@ function GetBuildingWindow(building) {
 			w.widgets.push(new WidLabel('Head Quaters of Intelligent Home', 'center'));
 			w.widgets.push(new WidValue('Number of customers', GetNumberOfCustomers()));
 			w.widgets.push(new WidValue('Total daily income', GetTotalDailyIncome()));
-			w.widgets.push(new WidValue('Total fees today', GetTotalFeesToday()));
+			w.widgets.push(new WidValue('Total fees so far today', GetTotalFeesToday()));
 			w.widgets.push(new WidValue('Number of trucks', g_trucks.length));
 			//w.widgets.push(new WidValue('Total daily running costs', '?'));
 			w.widgets.push(new WidCostAction('Buy another truck', MoneyStr(BUY_TRUCK_COST), 'buy_truck'));
+			w.widgets.push(new WidCostAction('Show game help', MoneyStr(0), 'show_intro'));
 			break;
 
 		case 'home':
@@ -564,6 +589,20 @@ function WidgetAction(w, widget) {
 				case 'abort_customer':
 					AbortCustomer(w.building);
 					g_open_windows.pop();
+					ShowWindow(GetMessageWindow('Customer contract aborted', [
+						'If you get this customer back again, it will',
+						'not pay you anything the first day. This is',
+						'to prevent cheating.',
+						'',
+						'Any charges for people who didn\'t get food',
+						'today has been taken from your bank account.',
+						'But apart from that, this building will not',
+						'cost you anything from now on.',
+					]));
+					break;
+				case 'show_intro':
+					g_open_windows.pop();
+					ShowWindow(GetIntoWindow());
 					break;
 				case 'truck_fill':
 					break;

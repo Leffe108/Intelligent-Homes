@@ -11,6 +11,8 @@ function Building(type, loc) {
 	this.fridge = new Fridge();
 	this.fridge.capacity = 10;
 	this.customer = false; // Is customer of player company?
+	this.past_customer = false; // Has this building been a customer in the past?
+	this.new_customer_time = null; // The simulation time when we got this customer.
 	this.hoover = false; // is mouse hovering over building?
 	this.last_missing_count = -1; // -1 when no customer eating has been done yet, otherwise 0-3.
 	this.today_missing_count = 0;
@@ -140,16 +142,20 @@ function DrawBuildings() {
 
 function NewCustomer(building) {
 	building.customer = true;
-	building.fridge.capacity = 10;
+	if (!building.past_customer) {
+		building.fridge.capacity = 10; // Let old fridges remain if past customer
+	}
+	building.new_customer_time = g_simulation_time;
 	g_animations.push(new Animation("gui_new_customer", building.x, building.y));
 }
 
 function AbortCustomer(building) {
 	// Take todays fees
 	g_bank_balance -= GetBuildingFee(building);
+	building.last_missing_count = -1;
+	building.today_missing_count = 0;
 
 	// Make no longer customer
 	building.customer = false;
-	building.last_missing_count = -1;
-	building.today_missing_count = 0;
+	building.past_customer = true;
 }
