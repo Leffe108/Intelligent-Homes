@@ -2,6 +2,7 @@
 // Global variables
 var g_canvas = null;
 var g_context = null;
+var g_is_touch = null; // Store if is touch client as events are wired up differently and work better if the status doesn't change.
 var g_logo_timer = null;
 var g_images = null;
 var g_town_buildings = null; // list of buildings, including HQ
@@ -101,6 +102,7 @@ function LoadImages() {
 }
 
 function InitInput() {
+	g_is_touch = 'ontouchstart' in window || !!(navigator.msMaxTouchPoints);
 	// Listen to keyboard and mouse events
 	g_keys_down = {};
 	g_mouse_down = {};
@@ -112,12 +114,18 @@ function InitInput() {
 	addEventListener("keyup", function (e) {
 		delete g_keys_down[e.keyCode];
 	}, false);
-	addEventListener("mousedown", function (e) {
-		g_mouse_down[e.button] = true;
-	}, false);
-	addEventListener("mouseup", function (e) {
-		delete g_mouse_down[e.button];
-	}, false);
+	var ev = g_is_touch ? 'click' : 'mousedown';
+	$(g_canvas).on(ev, function(e){
+		g_mouse_x = e.pageX - this.offsetLeft;
+		g_mouse_y = e.pageY - this.offsetTop;
+
+		g_mouse_down[g_is_touch ? 0 : e.button] = true;
+	});
+	if (!g_is_touch) {
+		$(g_canvas).mouseup(function(e) {
+			delete g_mouse_down[e.button];
+		});
+	}
 	$(g_canvas).mousemove(function(e) {
 		g_mouse_x = e.pageX - this.offsetLeft;
 		g_mouse_y = e.pageY - this.offsetTop;
@@ -182,6 +190,15 @@ function Update(time) {
 	//UpdateToolbar(gui_time);
 	UpdateCursor(gui_time);
 	UpdateWindows(gui_time);
+
+	if (g_is_touch) {
+		// We don't listen on mouse/touch up, instead delete click if it was not used by any
+		// UpdateXXX function.
+		// There might be a slight risk of a race condition where a click is lost on touch.
+		// However, haven't figured out a solution that work better than this for touch and still
+		// having a g_mouse_down variable.
+		delete g_mouse_down[0];
+	}
 }
 
 /**
