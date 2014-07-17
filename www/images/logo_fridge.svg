@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.4 r9939"
    sodipodi:docname="logo_fridge.svg"
-   inkscape:export-filename="C:\Users\Leif\Programmering\HTML5\IntelligentHome\www\images\logo_fridge.png"
+   inkscape:export-filename="C:\Users\Leif\Programmering\HTML5\IntelligentHomes\www\images\logo_fridge.png"
    inkscape:export-xdpi="45"
    inkscape:export-ydpi="45">
   <defs
@@ -135,7 +135,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
+     inkscape:zoom="0.35"
      inkscape:cx="702.43943"
      inkscape:cy="422.79873"
      inkscape:document-units="px"
@@ -154,7 +154,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -173,7 +173,7 @@
        sodipodi:insensitive="true" />
     <g
        id="g5125"
-       transform="translate(343.70505,16.043496)">
+       transform="translate(346.56219,24.614925)">
       <path
          style="fill:#cf4848;fill-opacity:1;stroke:none"
          d="m 173.87685,635.62738 c 0,0 31.33222,60.57565 27.15458,110.70722 -4.17762,50.13156 -18.79933,198.43746 -18.79933,198.43746 l 390.60846,-2.08882 c 0,0 -31.33223,-148.30588 -27.15461,-190.0822 4.17764,-41.7763 10.44409,-131.59536 10.44409,-131.59536 L 512.26492,568.78529 355.60376,449.72282 169.6992,614.73923 z"
@@ -214,26 +214,27 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-size:126.16963196px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="48.897236"
-       y="244.91786"
+       style="font-size:120.24065399px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       x="46.599449"
+       y="248.14883"
        id="text5107"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       transform="scale(1.0493093,0.95300788)"><tspan
          sodipodi:role="line"
          id="tspan5109"
-         x="48.897236"
-         y="244.91786">INTELLIGENT</tspan></text>
+         x="46.599449"
+         y="248.14883">INTELLIGENT</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:163.63061523px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="47.241207"
-       y="410.86447"
+       style="font-size:168.79251099px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       x="46.827854"
+       y="398.625"
        id="text5111"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5113"
-         x="47.241207"
-         y="410.86447">HOME</tspan></text>
+         x="46.827854"
+         y="398.625">HOMES</tspan></text>
     <path
        style="fill:#72dfda;fill-opacity:1;stroke:#000000;stroke-width:0.71676916;stroke-opacity:1"
        d="m 314.5053,958.80433 c 0,0 51.1978,-45.05406 55.29363,-69.62901 2.04791,-12.28747 0.82557,-50.31082 2.02841,-105.94215 1.26904,-58.69296 5.45459,-79.68548 -6.12423,-88.60948 -9.8417,-7.58516 -39.02444,-6.56121 -68.30665,-7.48079 -29.28221,-0.9196 -58.66389,-3.78272 -68.90345,1.33705 -20.47912,10.23956 -44.03011,31.74264 -44.03011,31.74264 l 50.17385,84.98834 z"

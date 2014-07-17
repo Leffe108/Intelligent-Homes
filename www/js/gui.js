@@ -268,7 +268,7 @@ function GetBuildingWindow(building) {
 	w.widgets = [];
 	switch (building.type) {
 		case 'hq':
-			w.widgets.push(new WidLabel('Head Quaters of Intelligent Home', 'center'));
+			w.widgets.push(new WidLabel('Head Quaters of Intelligent Homes', 'center'));
 			w.widgets.push(new WidValue('Number of customers', GetNumberOfCustomers()));
 			w.widgets.push(new WidValue('Total daily income', GetTotalDailyIncome()));
 			w.widgets.push(new WidValue('Total fees so far today', GetTotalFeesToday()));
@@ -321,7 +321,7 @@ function GetIntoWindow() {
 	var w = new Window();
 	w.type = 'intro';
 	w.widgets = [
-		new WidLabel('Welcome to Intelligent Home', 'center'),
+		new WidLabel('Welcome to Intelligent Homes', 'center'),
 		new WidLabel('Objective: Become rich', 'left'),
 		new WidLabel('To earn money, get customers that pay you well.', 'left'),
 		new WidLabel('But watch out that you deliver them a good service,', 'left'),
