@@ -24,7 +24,7 @@ function Building(type, loc) {
 function GetRandomBuilding(type) {
 	var n = 0;
 	var candidates = [];
-	for(var i = 0; i < g_town_buildings.length; i++) {
+	for (var i = 0; i < g_town_buildings.length; i++) {
 		if (g_town_buildings[i].type == type) {
 			n++;
 			candidates.push(i);
@@ -82,7 +82,7 @@ function GenerateBuildings() {
  */
 function UpdateBuildings(time) {
 
-	for(var i = 0; i < g_town_buildings.length; i++) {
+	for (var i = 0; i < g_town_buildings.length; i++) {
 		var building = g_town_buildings[i];
 
 		if (!building.customer) {

@@ -26,8 +26,8 @@ function GetFridgeIngredientCapacity(fridge, ingredient_name) {
 	var ingredient_count = GetMealPartIngredientCount(part);
 	var ingredient_capacity = part_capacity / ingredient_count;
 	var ingredient_i = 0;
-	for(var ingredient_name in g_ingredients) {
-		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+	for (var ingredient_name in g_ingredients) {
+		if (g_ingredients.hasOwnProperty(ingredient_name)) {
 			if (g_ingredients[ingredient_name].part == part) {
 				ingredient_i++;
 			}
@@ -42,8 +42,8 @@ function GetFridgeIngredientCapacity(fridge, ingredient_name) {
  * Fill up fridge to its capacity.
  */
 function FillFridge(fridge, minContent) {
-	for(var ingredient_name in fridge.storage) {
-		if(fridge.storage.hasOwnProperty(ingredient_name)) {
+	for (var ingredient_name in fridge.storage) {
+		if (fridge.storage.hasOwnProperty(ingredient_name)) {
 			fridge.storage[ingredient_name] = GetFridgeIngredientCapacity(fridge, ingredient_name);
 		}
 	}
@@ -53,7 +53,7 @@ function FillFridge(fridge, minContent) {
  * Fill up fridges of all buildings to their capacity
  */
 function FillAllFridges(minContent) {
-	for(var i = 0; i < g_town_buildings.length; i++) {
+	for (var i = 0; i < g_town_buildings.length; i++) {
 		FillFridge(g_town_buildings[i].fridge);
 	}
 }
@@ -72,9 +72,9 @@ function EatFromFridge(fridge, person) {
 	ingredients[MEAL_PART_2] = [];
 	ingredients[MEAL_PART_SALAD] = [];
 
-	for(var ingredient_name in fridge.storage) {
-		if(fridge.storage.hasOwnProperty(ingredient_name)) {
-			if(fridge.storage[ingredient_name] > 0) {
+	for (var ingredient_name in fridge.storage) {
+		if (fridge.storage.hasOwnProperty(ingredient_name)) {
+			if (fridge.storage[ingredient_name] > 0) {
 				var part = g_ingredients[ingredient_name].part;
 				ingredients[part].push(ingredient_name);
 			}
@@ -117,8 +117,8 @@ function EatFromFridge(fridge, person) {
  */
 function GetFridgeIngredientSpace(fridge) {
 	var result = new IngredientList(0);
-	for(var ingredient_name in g_ingredients) {
-		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+	for (var ingredient_name in g_ingredients) {
+		if (g_ingredients.hasOwnProperty(ingredient_name)) {
 			result[ingredient_name] = GetFridgeIngredientCapacity(fridge, ingredient_name) - fridge.storage[ingredient_name];
 		}
 	}
@@ -130,8 +130,8 @@ function GetFridgeIngredientSpace(fridge) {
  */
 function GetFridgeMealPartSum(fridge, meal_part) {
 	var sum = 0;
-	for(var ingredient_name in g_ingredients) {
-		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+	for (var ingredient_name in g_ingredients) {
+		if (g_ingredients.hasOwnProperty(ingredient_name)) {
 			if (g_ingredients[ingredient_name].part == meal_part) {
 				sum += fridge.storage[ingredient_name];
 			}

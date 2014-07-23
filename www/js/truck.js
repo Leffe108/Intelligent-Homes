@@ -67,7 +67,7 @@ function UpdateTrucks(time) {
 			if (truck.x == truck.target_x && truck.y == truck.target_y) {
 				if (this.stop_timer == null) {
 					this.stop_timer = 0;
-				} else if(this.stop_timer < 10.0) {
+				} else if (this.stop_timer < 10.0) {
 					this.stop_timer += time;
 				} else {
 					this.stop_timer = null;
@@ -75,8 +75,8 @@ function UpdateTrucks(time) {
 					// Deliver
 					var building = truck.current_order_list[truck.current_order].building;
 					var delivery = truck.current_order_list[truck.current_order].food;
-					for(var ingredient_name in delivery) {
-						if(delivery.hasOwnProperty(ingredient_name)) {
+					for (var ingredient_name in delivery) {
+						if (delivery.hasOwnProperty(ingredient_name)) {
 							// Deliver ingredient
 
 							// Calc space available in receiving fridge

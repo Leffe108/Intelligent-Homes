@@ -210,7 +210,7 @@ function Update(time) {
 function DrawImage(image, x, y, angle) {
 	if (angle == null) angle = 0;
 	var img = g_images[image];
-	if(img.complete && img.width > 0) { // .complete is always true in FF
+	if (img.complete && img.width > 0) { // .complete is always true in FF
 		g_context.save();
 		g_context.translate(Math.floor(x), Math.floor(y));
 		g_context.rotate(angle);
@@ -233,7 +233,7 @@ function Render() {
 	if (g_logo_timer >= 0) {
 		DrawImage("logo_fridge", 0, 0);
 		return;
-	} else if(IsGameOver()) {
+	} else if (IsGameOver()) {
 		DrawImage("game_over", 0, 0);
 		return;
 	}
@@ -271,8 +271,8 @@ function Render() {
 
 	if (IsIntroWindowOpen()) {
 		var x = g_canvas.width / 2 - GetIngredientCount() * 32 / 2;
-		for(var ingredient_name in g_ingredients) {
-			if(g_ingredients.hasOwnProperty(ingredient_name)) {
+		for (var ingredient_name in g_ingredients) {
+			if (g_ingredients.hasOwnProperty(ingredient_name)) {
 				DrawImage(ingredient_name, x, 32);
 				x += 32;
 			}

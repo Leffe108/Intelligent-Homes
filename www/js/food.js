@@ -42,8 +42,8 @@ function InitFood() {
  */
 function GetIngredientCount() {
 	var count = 0;
-	for(var ingredient_name in g_ingredients) {
-		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+	for (var ingredient_name in g_ingredients) {
+		if (g_ingredients.hasOwnProperty(ingredient_name)) {
 			count++;
 		}
 	}
@@ -55,8 +55,8 @@ function GetIngredientCount() {
  */
 function GetMealPartIngredientCount(meal_part) {
 	var count = 0;
-	for(var ingredient_name in g_ingredients) {
-		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+	for (var ingredient_name in g_ingredients) {
+		if (g_ingredients.hasOwnProperty(ingredient_name)) {
 			if (g_ingredients[ingredient_name].part == meal_part) {
 				count++;
 			}
@@ -70,8 +70,8 @@ function GetMealPartIngredientCount(meal_part) {
  * @param initial_value Initial value assigned to each key.
  */
 function IngredientList(initial_value) {
-	for(var ingredient_name in g_ingredients) {
-		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+	for (var ingredient_name in g_ingredients) {
+		if (g_ingredients.hasOwnProperty(ingredient_name)) {
 			this[ingredient_name] = initial_value;
 		}
 	}
@@ -79,8 +79,8 @@ function IngredientList(initial_value) {
 
 function GetIngredientListSum(list) {
 	var sum = 0;
-	for(var ingredient_name in g_ingredients) {
-		if(g_ingredients.hasOwnProperty(ingredient_name)) {
+	for (var ingredient_name in g_ingredients) {
+		if (g_ingredients.hasOwnProperty(ingredient_name)) {
 			sum += list[ingredient_name];
 		}
 	}

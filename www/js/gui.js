@@ -25,7 +25,7 @@ function Animation(image, start_x, start_y) {
 }
 
 function UpdateAnimations(time) {
-	for(var i = 0; i < g_animations.length; i++) {
+	for (var i = 0; i < g_animations.length; i++) {
 		var animation = g_animations[i];
 		animation.timer += time;
 		if (animation.timer > ANIMATION_MAX_TIME) {
@@ -43,7 +43,7 @@ function UpdateAnimations(time) {
  * Draws all Animations
  */
 function DrawAnimations() {
-	for(var i = 0; i < g_animations.length; i++) {
+	for (var i = 0; i < g_animations.length; i++) {
 		var animation = g_animations[i];
 		var start_alpha = 0.5;
 		g_context.globalAlpha = start_alpha * (ANIMATION_MAX_TIME - animation.timer) / (ANIMATION_MAX_TIME);
@@ -99,7 +99,7 @@ function GetToolbarBtnX(i) {
  */
 function DrawToolbar() {
 	DrawRect('rgb(80,170,250)', '', 0, 0, g_toolbar.length * (32 + 2 * TOOLBAR_BTN_PADDING), 32 + 2 * TOOLBAR_BTN_PADDING);
-	for(var i = 0; i < g_toolbar.length; i++) {
+	for (var i = 0; i < g_toolbar.length; i++) {
 		var button = g_toolbar[i];
 		var x = GetToolbarBtnX(i);
 		DrawImage("gui_" + button.name, x + 16, TOOLBAR_BTN_PADDING + 16);
@@ -126,7 +126,7 @@ function UpdateToolbar(gui_time) {
 	if (g_open_windows.length > 0) return;
 
 	// Toolbar button
-	for(var i = 0; i < g_toolbar.length; i++) {
+	for (var i = 0; i < g_toolbar.length; i++) {
 		g_toolbar[i].hoover = IsInBox(g_mouse_x, g_mouse_y, GetToolbarBtnX(i), TOOLBAR_BTN_PADDING, 32, 32);
 		if (g_toolbar[i].hoover && 0 in g_mouse_down) {
 			OnToolbarButton(g_toolbar[i]);
@@ -140,7 +140,7 @@ function UpdateToolbar(gui_time) {
  * @param button The button object
  */
 function OnToolbarButton(button) {
-	switch(button.name) {
+	switch (button.name) {
 		case 'new_customer':
 			g_cursor_mode = 'new_customer';
 			break;
@@ -166,7 +166,7 @@ function DrawCursor() {
 	// No cursor tool active?
 	if (g_cursor_mode == "") return;
 
-	for(var i = 0; i < g_town_buildings.length; i++) {
+	for (var i = 0; i < g_town_buildings.length; i++) {
 		var building = g_town_buildings[i];
 		if (building.hoover && AllowCursorOnBuilding(building, g_cursor_mode)) {
 			DrawImage("gui_" + g_cursor_mode, building.x, building.y);
@@ -192,7 +192,7 @@ function UpdateCursor() {
 				var mode = g_cursor_mode;
 				g_cursor_mode = "";
 				OnCursorClick(building, mode);
-			} else  if(g_cursor_mode == "") {
+			} else  if (g_cursor_mode == "") {
 				ShowWindow(GetBuildingWindow(building));
 				delete g_mouse_down[0];
 			}
@@ -486,7 +486,7 @@ function DrawWidget(w, widget) {
 	g_context.textBaseline = "top";
 	g_context.fillStyle = 'black';
 
-	switch(widget.type) {
+	switch (widget.type) {
 		case 'label':
 			if (widget.align == 'center') {
 				g_context.textAlign = "center";
@@ -530,7 +530,7 @@ function DrawWidget(w, widget) {
 function UpdateWidget(w, widget) {
 	var hoover_widget = IsInBox(g_mouse_x, g_mouse_y, widget.x, widget.y, widget.width, GetWidgetHeight(widget));
 
-	switch(widget.type) {
+	switch (widget.type) {
 		case 'label':
 			// Has no action
 			break;
