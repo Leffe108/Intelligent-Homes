@@ -1,5 +1,13 @@
+/*
+ * A person live in a home and go to work. It eats three meals a day:
+ * 1) Breakfast  at home
+ * 2) Lunch      at work
+ * 3) Dinner     at home
+ */
 
-
+/**
+ * Constructor of Person
+ */
 function Person() {
 	this.home = null;
 	this.work = null;
@@ -14,9 +22,6 @@ function Person() {
 	this.time_go_home = null;
 	this.next_meal_of_day = MEAL_BREAKFAST;
 }
-
-
-//Person.prototype.
 
 // Generates people and store them in g_people
 function GeneratePeople() {
@@ -45,6 +50,11 @@ function GeneratePeople() {
 	}
 }
 
+/**
+ * Set the target building for given person.
+ * @param person The person that should walk
+ * @param building The building where the person should go
+ */
 function SetPersonTargetBuilding(person, building) {
 	person.target_x = building.x;
 	person.target_y = building.y;

@@ -1,8 +1,9 @@
 
 /**
  * Constructor of Building
- * @param type The type of building ("home" or "work")
+ * @param type The type of building ("home", "work" or "hq")
  * @param loc An object with 'x' and 'y' coordinates
+ * @note There should only be one HQ building.
  */
 function Building(type, loc) {
 	this.type = type;
@@ -140,6 +141,10 @@ function DrawBuildings() {
 	}
 }
 
+/**
+ * Make given building a new customer of the company.
+ * @param building The building that will become customer.
+ */
 function NewCustomer(building) {
 	building.customer = true;
 	if (!building.past_customer) {
@@ -149,6 +154,11 @@ function NewCustomer(building) {
 	g_animations.push(new Animation("gui_new_customer", building.x, building.y));
 }
 
+/**
+ * Abort customer contract with given building. This building will
+ * be changed to no longer be a customer of the company.
+ * @param building The building that will no longer be a customer.
+ */
 function AbortCustomer(building) {
 	// Take todays fees
 	g_bank_balance -= GetBuildingFee(building);
