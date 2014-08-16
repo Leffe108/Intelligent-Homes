@@ -47,7 +47,7 @@ function GeneratePeople() {
 		person.time_go_to_work = 6 * 60 + Math.floor(Math.random()*8) * 15;
 		person.time_go_home = person.time_go_to_work + 6 * 60 + Math.floor(Math.random()*4) * 60;
 		person.lunch_time = Math.min(11 * 60 + 30 + Math.floor(Math.random() * 90), person.time_go_home - 30);
-		person.dinner_time = Math.max(person.time_go_home, 17 * 60 + Math.floor(Math.random() * 3) * 60);
+		person.dinner_time = Math.max(person.time_go_home, 17 * 60 + Math.floor(Math.random() * 3 * 60));
 
 		g_people.push(person);
 		gen++;
