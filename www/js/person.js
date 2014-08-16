@@ -20,6 +20,7 @@ function Person() {
 	// when to go to work/home
 	this.time_go_to_work = null;
 	this.time_go_home = null;
+	this.lunch_time = null // when to eat lunch
 	this.dinner_time = null; // when to eat dinner
 	this.next_meal_of_day = MEAL_BREAKFAST;
 }
@@ -45,6 +46,7 @@ function GeneratePeople() {
 
 		person.time_go_to_work = 6 * 60 + Math.floor(Math.random()*8) * 15;
 		person.time_go_home = person.time_go_to_work + 6 * 60 + Math.floor(Math.random()*4) * 60;
+		person.lunch_time = Math.min(11 * 60 + 30 + Math.floor(Math.random() * 90), person.time_go_home - 30);
 		person.dinner_time = Math.max(person.time_go_home, 17 * 60 + Math.floor(Math.random() * 3) * 60);
 
 		g_people.push(person);
@@ -109,7 +111,7 @@ function UpdatePeople(time) {
 				}
 				break;
 			case MEAL_LUNCH:
-				if (g_simulation_time > Math.min(12 * 60, person.time_go_home - 30) && person.at == "work") {
+				if (g_simulation_time > person.lunch_time && person.at == "work") {
 					n_missing = EatFromFridge(person.work.fridge, person);
 					person.next_meal_of_day = MEAL_DINNER;
 				}
