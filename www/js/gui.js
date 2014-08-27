@@ -203,7 +203,7 @@ function GetBuildingWindow(building) {
  * Factory for intro window
  * Don't call with 'new'
  */
-function GetIntoWindow() {
+function GetIntroWindow() {
 	var w = new Window();
 	w.type = 'intro';
 	w.widgets = [
@@ -449,7 +449,7 @@ function WidgetAction(w, widget_name, widget_type) {
 					break;
 				case 'show_intro':
 					CloseTopWindow();
-					ShowWindow(GetIntoWindow());
+					ShowWindow(GetIntroWindow());
 					break;
 				case 'truck_fill':
 					break;

@@ -155,7 +155,7 @@ function Update(time) {
 		g_logo_timer += gui_time;
 		if (g_logo_timer > 2.5) {
 			g_logo_timer = -1;
-			ShowWindow(GetIntoWindow());
+			ShowWindow(GetIntroWindow());
 		} else {
 			return; // continue to show logo - don't update game state
 		}
