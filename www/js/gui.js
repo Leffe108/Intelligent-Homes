@@ -75,7 +75,6 @@ function InitGUI() {
 		new ImageButton("new_equipment", "Buy new Equipment"),
 	];
 	g_open_windows = [];
-	g_cursor_mode = "";
 
 	ShowWindow(GetIntoWindow());
 }
@@ -88,95 +87,13 @@ function IsIntroWindowOpen() {
 }
 
 /**
- * Get x coordinate of toolbar btn with index i.
- */
-function GetToolbarBtnX(i) {
-	return TOOLBAR_BTN_PADDING + i * (32 + 2 * TOOLBAR_BTN_PADDING);
-}
-
-/**
- * Draw toolbar
- */
-function DrawToolbar() {
-	DrawRect('rgb(80,170,250)', '', 0, 0, g_toolbar.length * (32 + 2 * TOOLBAR_BTN_PADDING), 32 + 2 * TOOLBAR_BTN_PADDING);
-	for (var i = 0; i < g_toolbar.length; i++) {
-		var button = g_toolbar[i];
-		var x = GetToolbarBtnX(i);
-		DrawImage("gui_" + button.name, x + 16, TOOLBAR_BTN_PADDING + 16);
-		if (button.hoover) {
-			// get text width
-			g_context.font = "14px Verdana";
-			var metrics = g_context.measureText(button.caption);
-
-			// draw background
-			var label_y = 3*TOOLBAR_BTN_PADDING + 32;
-			DrawRect('yellow', '', x, label_y, metrics.width, 14);
-
-			// draw text
-			g_context.textAlign = "left";
-			g_context.textBaseline = "top";
-			g_context.fillStyle = 'black';
-			g_context.fillText(button.caption, x, label_y);
-		}
-	}
-}
-
-function UpdateToolbar(gui_time) {
-	// Windows are modal
-	if (g_open_windows.length > 0) return;
-
-	// Toolbar button
-	for (var i = 0; i < g_toolbar.length; i++) {
-		g_toolbar[i].hoover = IsInBox(g_mouse_x, g_mouse_y, GetToolbarBtnX(i), TOOLBAR_BTN_PADDING, 32, 32);
-		if (g_toolbar[i].hoover && 0 in g_mouse_down) {
-			OnToolbarButton(g_toolbar[i]);
-			delete g_mouse_down[0]; // handled click
-		}
-	}
-}
-
-/**
- * Called when user clicks a toolbar button
- * @param button The button object
- */
-function OnToolbarButton(button) {
-	switch (button.name) {
-		case 'new_customer':
-			g_cursor_mode = 'new_customer';
-			break;
-
-		case 'new_equipment':
-			g_cursor_mode = 'new_equipment';
-			break;
-	}
-}
-
-/**
- * Is the current cursor mode allowed on given
- * building?
- */
-function AllowCursorOnBuilding(building, mode) {
-	return building.type != "hq" || mode != "new_customer";
-}
-
-/**
- * Cursor click on buildings
+ * Draw cursor
  */
 function DrawCursor() {
-	// No cursor tool active?
-	if (g_cursor_mode == "") return;
-
-	for (var i = 0; i < g_town_buildings.length; i++) {
-		var building = g_town_buildings[i];
-		if (building.hoover && AllowCursorOnBuilding(building, g_cursor_mode)) {
-			DrawImage("gui_" + g_cursor_mode, building.x, building.y);
-		}
-	}
 }
 
 /**
- * Updates hoover status for buildings. Also checks if a building
- * is clicked while a cursor mode is active.
+ * Handle cursor hoover + click on buildings.
  */
 function UpdateCursor() {
 	if (g_open_windows.length > 0) return;
@@ -185,35 +102,11 @@ function UpdateCursor() {
 		var building = g_town_buildings[i];
 		building.hoover = IsInBox(g_mouse_x, g_mouse_y, building.x - 16, building.y - 16, 32, 32);
 
+		// Clicked on building?
 		if (building.hoover && 0 in g_mouse_down) {
-			if (g_cursor_mode != "" && AllowCursorOnBuilding(building, g_cursor_mode)) {
-				g_animations.push(new Animation("gui_" + g_cursor_mode, building.x, building.y));
-				delete g_mouse_down[0];
-				var mode = g_cursor_mode;
-				g_cursor_mode = "";
-				OnCursorClick(building, mode);
-			} else  if (g_cursor_mode == "") {
-				ShowWindow(GetBuildingWindow(building));
-				delete g_mouse_down[0];
-			}
+			ShowWindow(GetBuildingWindow(building));
+			delete g_mouse_down[0];
 		}
-	}
-}
-
-function OnCursorClick(building, mode) {
-
-	switch (mode) {
-		case 'new_customer':
-			NewCustomer(building);
-			g_open_windows.push(new Window('Wow you got a new customer!'));
-			break;
-
-		case 'new_equipment':
-			if (TryBuy(1000)) {
-				building.fridge.capacity += 10;
-				g_open_windows.push(new Window('Fridge capacity increased by 10'));
-			}
-			break;
 	}
 }
 

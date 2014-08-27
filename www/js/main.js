@@ -13,7 +13,6 @@ var g_ingredients = null;
 var g_animations = null;
 var g_toolbar = null; // gui toolbar
 var g_open_windows = null; // gui open windows
-var g_cursor_mode = null;
 var g_simulation_time = null; // unit: minutes (total 24*60 a day)
 var g_simulation_day = null; // day counter
 var g_last_loop = null;
@@ -187,7 +186,6 @@ function Update(time) {
 
 	// Always update GUI
 	UpdateAnimations(gui_time);
-	//UpdateToolbar(gui_time);
 	UpdateCursor(gui_time);
 	UpdateWindows(gui_time);
 
@@ -265,7 +263,6 @@ function Render() {
 	g_context.fillText(MoneyStr(g_bank_balance), g_canvas.width - 4, g_canvas.height - 4);
 
 	// Draw GUI
-	//DrawToolbar();
 	DrawCursor();
 	DrawWindows();
 
