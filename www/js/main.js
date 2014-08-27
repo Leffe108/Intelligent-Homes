@@ -32,16 +32,10 @@ function InitCanvas() {
 	g_context = g_canvas.getContext("2d"); 
 	g_canvas.width = 512;
 	g_canvas.height = 480;
-	g_canvas.style = 
-		"position: absolute;" +
-		"width: 512px;" +
-		"height: 480px;" +
-		"top: 0;" +
-		"bottom: 0;" +
-		"left: 0;" +
-		"right: 0;" +
-		"margin: auto;";
-	document.body.appendChild(g_canvas);
+	g_canvas.id = 'canvas';
+	var game = document.getElementById('game');
+	game.appendChild(g_canvas);
+	//document.body.appendChild(g_canvas);
 }
 
 /**
@@ -114,7 +108,8 @@ function InitInput() {
 		delete g_keys_down[e.keyCode];
 	}, false);
 	var ev = g_is_touch ? 'click' : 'mousedown';
-	$(g_canvas).on(ev, function(e){
+	$('#game').on(ev, function(e){
+		if (!$('#gui-overlay').hasClass('hidden')) return;
 		g_mouse_x = e.pageX - this.offsetLeft;
 		g_mouse_y = e.pageY - this.offsetTop;
 
@@ -125,7 +120,8 @@ function InitInput() {
 			delete g_mouse_down[e.button];
 		});
 	}
-	$(g_canvas).mousemove(function(e) {
+	$('#game').mousemove(function(e) {
+		if (!$('#gui-overlay').hasClass('hidden')) return;
 		g_mouse_x = e.pageX - this.offsetLeft;
 		g_mouse_y = e.pageY - this.offsetTop;
 	});
@@ -159,6 +155,7 @@ function Update(time) {
 		g_logo_timer += gui_time;
 		if (g_logo_timer > 2.5) {
 			g_logo_timer = -1;
+			ShowWindow(GetIntoWindow());
 		} else {
 			return; // continue to show logo - don't update game state
 		}

@@ -2,14 +2,13 @@
  * GUI related stuff
  */
 
-var TOOLBAR_BTN_PADDING = 4;
 var ANIMATION_MAX_TIME = 2.0;
-var GUI_FONT_SIZE = 14;
-var DO_IT_OFFSET = 320;
 
 var SELL_25_COST = 100;
 var SELL_50_COST = 200;
 var SELL_100_COST = 4000;
+
+var BOTTOM_WINDOW_Z = 10; ///< z-index of the window displayed at the bottom of the open window stack.
 
 /**
  * Creates an animation.
@@ -75,8 +74,6 @@ function InitGUI() {
 		new ImageButton("new_equipment", "Buy new Equipment"),
 	];
 	g_open_windows = [];
-
-	ShowWindow(GetIntoWindow());
 }
 
 /**
@@ -114,16 +111,12 @@ function UpdateCursor() {
  * Window constructor
  */
 function Window(caption) {
-	var margin = 64;
 	this.type = 'window';
-	this.x = margin;
-	this.y = margin;
-	this.width = g_canvas.width - margin * 2;
-	this.height = g_canvas.height - margin * 2;
 	this.widgets = [
 		new WidLabel(caption, 'center'),
 		new WidClose(),
 	];
+	this.dom_node = null; ///< Reference to DOM node object
 }
 
 /**
@@ -216,15 +209,19 @@ function GetIntoWindow() {
 	w.widgets = [
 		new WidLabel('Welcome to Intelligent Homes', 'center'),
 		new WidLabel('Objective: Become rich', 'left'),
-		new WidLabel('To earn money, get customers that pay you well.', 'left'),
-		new WidLabel('But watch out that you deliver them a good service,', 'left'),
-		new WidLabel('or your income may turn into loss due to fees for', 'left'),
-		new WidLabel('missing food.', 'left'),
+		new WidLabel(
+			'To earn money, get customers that pay you well. ' +
+			'But watch out that you deliver them a good service, ' +
+			'or your income may turn into loss due to fees for ' +
+			'missing food.', 'left'
+		),
 		new WidSpacer(),
 		new WidLabel('Food?', 'left'),
-		new WidLabel('Yes, we offer intelligent fridges for a daily fee.', 'left'),
-		new WidLabel('They call back to our HQ when someone take a meal', 'left'),
-		new WidLabel('so we can make sure the fridges never empties.', 'left'),
+		new WidLabel(
+			'Yes, we offer intelligent fridges for a daily fee. ' +
+			'They call back to our HQ when someone take a meal ' +
+			'so we can make sure the fridges never empties.', 'left'
+		),
 		new WidSpacer(),
 		new WidLabel('Click on buildings to get started', 'left'),
 		new WidClose(),
@@ -236,55 +233,99 @@ function GetIntoWindow() {
  * Show a window
  */
 function ShowWindow(w) {
-	LayoutWidgets(w);
+	if (g_open_windows.length == 0) $('#gui-overlay').removeClass('hidden');
+	RenderWindowHtml(w);
 	g_open_windows.push(w);
+}
+
+/**
+ * Close topmost window
+ */
+function CloseTopWindow() {
+	if (g_open_windows.length == 0) return;
+	$(g_open_windows[g_open_windows.length-1].dom_node).remove();
+	g_open_windows.pop();
+	if (g_open_windows.length == 0) $('#gui-overlay').addClass('hidden');
 }
 
 /**
  * Draw windows
  */
 function DrawWindows() {
-	for (var i = 0; i < g_open_windows.length; i++) {
-		var w = g_open_windows[i];
-		DrawRect('rgb(234,234,234)', 'black', w.x, w.y, w.width, w.height);
-
-		for (var iwid = 0; iwid < w.widgets.length; iwid++) {
-			DrawWidget(w, w.widgets[iwid]);
-		}
-	}
-
+	// Windows are HTML dom nodes drawn by the browser
 }
 
 function UpdateWindows(gui_time) {
-	for (var i = g_open_windows.length - 1; i >= 0; i--) {
-		var w = g_open_windows[i];
-		for (var iwid = 0; iwid < w.widgets.length; iwid++) {
-			UpdateWidget(w, w.widgets[iwid]);
-		}
-	}
+	// Windows use browser click handler
 }
 
 /**
+ * Creates DOM html elements for window and its widgets. 
+ * The window html element is saved in w.dom_node and inserted
+ * into the gui overlay DOM node.
+ * This function also attach event handlers to clickable widgets
+ * to link them up with WidgetAction function.
  * @param w Window
  */
-function LayoutWidgets(w) {
-	var MARGIN = 6;
-	var y = w.y;
+function RenderWindowHtml(w) {
+	var window_div = document.createElement('div');
+	window_div.className = 'window';
+	var spacer = false; // was previous widget a spacer?
 	for (var i = 0; i < w.widgets.length; i++) {
 		var widget = w.widgets[i];
-		var widget_height = GetWidgetHeight(widget);
-		y += MARGIN;
-
-		// Put close widget at bottom
-		if (i == w.widgets.length -1 && widget.type == 'close') {
-			y = Math.max(y, w.y + w.height - widget_height - MARGIN);
+		var widget_div = document.createElement('div');
+		widget_div.className = 'widget wid-' + widget.type.replace('_', '-');
+		$(widget_div).attr('data-wid-name', widget.name);
+		$(widget_div).attr('data-wid-type', widget.type);
+		switch (widget.type) {
+			case 'spacer':
+				spacer = true;
+				continue;
+			case 'label':
+				$(widget_div).append('<p class="label" style="text-align:' + widget.align + '">' + widget.label + '</p>');
+				break;
+			case 'value':
+				$(widget_div).append('<p class="label">' + widget.label + '</p>');
+				$(widget_div).append('<p class="value">' + widget.value + '</p>');
+				break;
+			case 'value_edit':
+				$(widget_div).append('<p class="label">' + widget.label + '</p>');
+				$(widget_div).append('<input class="value" type="number" value="' + widget.value + '">');
+				break;
+			case 'cost_action':
+				$(widget_div).append('<p class="label">' + widget.label + '</p>');
+				$(widget_div).append('<p class="cost">' + widget.cost + '</p>');
+				$(widget_div).append('<a class="do-it">Do it!</a>');
+				break;
+			case 'close':
+				$(widget_div).append('<a class="close">Click to close</a>');
 		}
-
-		widget.y = y;
-		widget.x = w.x + MARGIN;
-		widget.width = w.width - 2 * MARGIN;
-		y += widget_height + MARGIN;
+		if (spacer) {
+			widget_div.className += ' extra-top-margin';
+			spacer = false;
+		}
+		
+		window_div.appendChild(widget_div);
 	}
+
+	$(window_div).children('.wid-close').children('.close').on('click', function() {
+		$(this).parent().parent().remove();
+		g_open_windows.pop();
+		if (g_open_windows.length == 0) $('#gui-overlay').addClass('hidden');
+	});
+	$(window_div).children('.wid-cost-action').children('.do-it').on('click', function() {
+		var widget_name = $(this).parent().attr('data-wid-name');
+		var widget_type = $(this).parent().attr('data-wid-type');
+		WidgetAction(w, widget_name, widget_type);
+	});
+
+	// Make new window appear ontop of any existing window
+	// on screen.
+	$(window_div).css('z-index', BOTTOM_WINDOW_Z + g_open_windows.length);
+	
+	var overlay = document.getElementById('gui-overlay');
+	overlay.appendChild(window_div);
+	w.dom_node = window_div;
 }
 
 /**
@@ -292,10 +333,7 @@ function LayoutWidgets(w) {
  */
 function Widget() {
 	this.type = 'widget';
-	// x/y/width is managed by the window. Widget can read it.
-	this.x = null;
-	this.y = null;
-	this.width = null;
+	this.name = '';
 }
 
 /** 
@@ -368,120 +406,36 @@ WidSpacer.prototype = new Widget();
 
 /*** Widget functions ***/
 
-function GetWidgetHeight(widget) {
-	if (widget.type == 'spacer') return 0; // Widget margin still give enough spacing
-	return GUI_FONT_SIZE;
-}
-
-function DrawWidget(w, widget) {
-	g_context.font = GUI_FONT_SIZE + "px Verdana";
-	g_context.textAlign = "left";
-	g_context.textBaseline = "top";
-	g_context.fillStyle = 'black';
-
-	switch (widget.type) {
-		case 'label':
-			if (widget.align == 'center') {
-				g_context.textAlign = "center";
-				g_context.fillText(widget.label, widget.x + widget.width/2, widget.y);
-			} else {
-				g_context.fillText(widget.label, widget.x, widget.y);
-			}
-			break;
-		case 'value':
-			g_context.fillText(widget.label + ':', widget.x, widget.y);
-			g_context.fillText(widget.value, widget.x + 200, widget.y);
-			break;
-		case 'value_edit':
-			g_context.fillText(widget.label + ':', widget.x, widget.y);
-			g_context.fillText(widget.value, widget.x + 200, widget.y);
-			g_context.fillText('-', widget.x + 270, widget.y);
-			g_context.fillText('+', widget.x + 290, widget.y);
-			break;
-		case 'cost_action':
-			g_context.fillText(widget.label, widget.x, widget.y);
-			g_context.fillText(widget.cost, widget.x + 200, widget.y);
-			var do_it_x = widget.x + DO_IT_OFFSET;
-			var do_it_width = widget.x + widget.width - do_it_x;
-			if (widget.hoover) DrawRect('blue', '', do_it_x, widget.y, do_it_width, GetWidgetHeight(widget));
-			g_context.fillStyle = widget.hoover? 'white' : 'blue';
-			g_context.fillText('Do it!', widget.x + DO_IT_OFFSET, widget.y);
-			break;
-		case 'close':
-			if (widget.hoover) DrawRect('blue', '', widget.x, widget.y, widget.width, GetWidgetHeight(widget));
-			g_context.textAlign = "center";
-			g_context.fillStyle = widget.hoover? 'white' : 'blue';
-			g_context.fillText('Click to close', widget.x + widget.width/2, widget.y);
-	}
-}
-
-/**
- * Update widget
- * @param w Window instance
- * @param widget Widget instance
- */
-function UpdateWidget(w, widget) {
-	var hoover_widget = IsInBox(g_mouse_x, g_mouse_y, widget.x, widget.y, widget.width, GetWidgetHeight(widget));
-
-	switch (widget.type) {
-		case 'label':
-			// Has no action
-			break;
-		case 'value':
-			// Has no action
-			break;
-		case 'value_edit':
-			break;
-		case 'cost_action':
-			//var do_it_x = widget.x + DO_IT_OFFSET;
-			//var do_it_width = widget.x + widget.width - do_it_x;
-			//widget.hoover = IsInBox(g_mouse_x, g_mouse_x, do_it_x, widget.y, do_it_width, GetWidgetHeight(widget));
-			widget.hoover = hoover_widget;
-			if (widget.hoover && 0 in g_mouse_down) {
-				WidgetAction(w, widget);
-				delete g_mouse_down[0];
-			}
-			break;
-		case 'close':
-			widget.hoover = hoover_widget;
-			if (widget.hoover && 0 in g_mouse_down) {
-				WidgetAction(w, widget);
-				delete g_mouse_down[0];
-			}
-			break;
-	}
-}
-
 /**
  * Called when a click on a widget (with action) is detected.
  */
-function WidgetAction(w, widget) {
+function WidgetAction(w, widget_name, widget_type) {
 	// Close window?
-	if (widget.type == 'close') {
-		g_open_windows.pop();
+	if (widget_type == 'close') {
+		CloseTopWindow();
 		return;
 	}
 
 	// Window specific action
 	switch (w.type) {
 		case 'building':
-			switch (widget.name) {
+			switch (widget_name) {
 				case 'buy_fridge':
 					if (TryBuy(1000)) {
 						w.building.fridge.capacity += 10;
-						g_open_windows.pop();
+						CloseTopWindow();
 						ShowWindow(new Window('Fridge capacity increased by 10'));
 					}
 					break;
 				case 'buy_truck':
 					if (BuyTruck()) {
-						g_open_windows.pop();
+						CloseTopWindow();
 						ShowWindow(new Window('A new shiny truck is now available at your HQ.'));
 					}
 					break;
 				case 'abort_customer':
 					AbortCustomer(w.building);
-					g_open_windows.pop();
+					CloseTopWindow();
 					ShowWindow(GetMessageWindow('Customer contract aborted', [
 						'If you get this customer back again, it will',
 						'not pay you anything the first day. This is',
@@ -494,7 +448,7 @@ function WidgetAction(w, widget) {
 					]));
 					break;
 				case 'show_intro':
-					g_open_windows.pop();
+					CloseTopWindow();
 					ShowWindow(GetIntoWindow());
 					break;
 				case 'truck_fill':
@@ -502,19 +456,19 @@ function WidgetAction(w, widget) {
 				case 'seller_25':
 					if (TryBuy(SELL_25_COST)) {
 						if (Math.random() <= 0.25) NewCustomer(w.building);
-						g_open_windows.pop();
+						CloseTopWindow();
 					}
 					break;
 				case 'seller_50':
 					if (TryBuy(SELL_50_COST)) {
 						if (Math.random() <= 0.50) NewCustomer(w.building);
-						g_open_windows.pop();
+						CloseTopWindow();
 					}
 					break;
 				case 'seller_100':
 					if (TryBuy(SELL_100_COST)) {
 						NewCustomer(w.building);
-						g_open_windows.pop();
+						CloseTopWindow();
 					}
 					break;
 			}
