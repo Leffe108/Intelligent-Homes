@@ -295,10 +295,10 @@ function RenderWindowHtml(w) {
 			case 'cost_action':
 				$(widget_div).append('<p class="label">' + widget.label + '</p>');
 				$(widget_div).append('<p class="cost">' + widget.cost + '</p>');
-				$(widget_div).append('<a class="do-it">Do it!</a>');
+				$(widget_div).append('<a class="do-it" tabindex="0">Do it!</a>');
 				break;
 			case 'close':
-				$(widget_div).append('<a class="close">Click to close</a>');
+				$(widget_div).append('<a class="close" tabindex="0">Click to close</a>');
 		}
 		if (spacer) {
 			widget_div.className += ' extra-top-margin';
