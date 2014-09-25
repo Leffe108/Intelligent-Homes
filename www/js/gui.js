@@ -301,6 +301,13 @@ function RenderWindowHtml(w) {
 		var widget_type = $(this).parent().attr('data-wid-type');
 		WidgetAction(w, widget_name, widget_type);
 	});
+	$(window_div).find('a').on('keypress', function(e) {
+		var key = e.which;
+		if (key == 13) { // enter
+			this.click();
+			return false;
+		}
+	});
 
 	// Make new window appear ontop of any existing window
 	// on screen.
