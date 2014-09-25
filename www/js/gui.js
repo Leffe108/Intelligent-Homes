@@ -52,27 +52,10 @@ function DrawAnimations() {
 }
 
 /**
- * ImageButton class
- * @param name Unique name of the button used for logic binding and image name.
- * @param caption Text to display when button is hovered.
- * @param x,y center of the button. Button is assumed to be 32x32 and have the
- * image offset set to 16,16.
- */
-function ImageButton(name, caption, x, y) {
-	this.name = name;
-	this.caption = caption;
-	this.hoover = false;
-}
-
-/**
  * Initialize GUI-related stuff
  */
 function InitGUI() {
 	g_animations = [];
-	g_toolbar = [
-		new ImageButton("new_customer", "New Customer"),
-		new ImageButton("new_equipment", "Buy new Equipment"),
-	];
 	g_open_windows = [];
 }
 

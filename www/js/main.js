@@ -11,7 +11,6 @@ var g_people = null; // list of Person
 var g_trucks = null; // list of Truck
 var g_ingredients = null;
 var g_animations = null;
-var g_toolbar = null; // gui toolbar
 var g_open_windows = null; // gui open windows
 var g_simulation_time = null; // unit: minutes (total 24*60 a day)
 var g_simulation_day = null; // day counter
