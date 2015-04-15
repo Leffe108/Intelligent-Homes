@@ -2,7 +2,6 @@
 // Global variables
 var g_canvas = null;
 var g_context = null;
-var g_is_touch = null; // Store if is touch client as events are wired up differently and work better if the status doesn't change.
 var g_logo_timer = null;
 var g_images = null;
 var g_town_buildings = null; // list of buildings, including HQ
@@ -17,7 +16,6 @@ var g_simulation_day = null; // day counter
 var g_last_loop = null;
 var g_game_speed = null;
 var g_game_paused = null;
-var g_keys_down = null;
 var g_bank_balance = null; // amount of money for our company
 
 // Methods
@@ -88,18 +86,6 @@ function LoadImages() {
 		gui_new_customer: LoadImage("gui_new_customer", 16, 16),
 		gui_new_equipment: LoadImage("gui_new_equipment", 16, 16),
 	}
-}
-
-function InitInput() {
-	g_is_touch = 'ontouchstart' in window || !!(navigator.msMaxTouchPoints);
-	// Listen to keyboard and mouse events
-	g_keys_down = {};
-	addEventListener("keydown", function (e) {
-		g_keys_down[e.keyCode] = true;
-	}, false);
-	addEventListener("keyup", function (e) {
-		delete g_keys_down[e.keyCode];
-	}, false);
 }
 
 function InitGameState()
@@ -264,7 +250,6 @@ function Init() {
 	g_logo_timer = 0;
 	InitCanvas();
 	LoadImages();
-	InitInput();
 	InitGUI();
 	InitGameState();
 
