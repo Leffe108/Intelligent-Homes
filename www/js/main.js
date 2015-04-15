@@ -18,9 +18,6 @@ var g_last_loop = null;
 var g_game_speed = null;
 var g_game_paused = null;
 var g_keys_down = null;
-var g_mouse_down = null;
-var g_mouse_x = null;
-var g_mouse_y = null;
 var g_bank_balance = null; // amount of money for our company
 
 // Methods
@@ -97,33 +94,12 @@ function InitInput() {
 	g_is_touch = 'ontouchstart' in window || !!(navigator.msMaxTouchPoints);
 	// Listen to keyboard and mouse events
 	g_keys_down = {};
-	g_mouse_down = {};
-	g_mouse_x = 0;
-	g_mouse_y = 0;
 	addEventListener("keydown", function (e) {
 		g_keys_down[e.keyCode] = true;
 	}, false);
 	addEventListener("keyup", function (e) {
 		delete g_keys_down[e.keyCode];
 	}, false);
-	var ev = g_is_touch ? 'click' : 'mousedown';
-	$('#game').on(ev, function(e){
-		if (!$('#gui-overlay').hasClass('hidden')) return;
-		g_mouse_x = e.pageX - this.offsetLeft;
-		g_mouse_y = e.pageY - this.offsetTop;
-
-		g_mouse_down[g_is_touch ? 0 : e.button] = true;
-	});
-	if (!g_is_touch) {
-		$(g_canvas).mouseup(function(e) {
-			delete g_mouse_down[e.button];
-		});
-	}
-	$('#game').mousemove(function(e) {
-		if (!$('#gui-overlay').hasClass('hidden')) return;
-		g_mouse_x = e.pageX - this.offsetLeft;
-		g_mouse_y = e.pageY - this.offsetTop;
-	});
 }
 
 function InitGameState()
@@ -160,9 +136,11 @@ function Update(time) {
 		}
 	}
 
-	// Restart game if clicking on game over screen
-	if (0 in g_mouse_down && IsGameOver()) {
-		location.reload();
+	// If game was just lost, enable click detection on game over
+	// screen to reload game.
+	if (IsGameOver() && !IsGameOverOverlayActive()) {
+		while (HasOpenWindows()) CloseTopWindow();
+		SwitchOverlay(OVERLAY_GAME_OVER);
 	}
 
 	// Progress game time unless paused
@@ -182,17 +160,7 @@ function Update(time) {
 
 	// Always update GUI
 	UpdateAnimations(gui_time);
-	UpdateCursor(gui_time);
 	UpdateWindows(gui_time);
-
-	if (g_is_touch) {
-		// We don't listen on mouse/touch up, instead delete click if it was not used by any
-		// UpdateXXX function.
-		// There might be a slight risk of a race condition where a click is lost on touch.
-		// However, haven't figured out a solution that work better than this for touch and still
-		// having a g_mouse_down variable.
-		delete g_mouse_down[0];
-	}
 }
 
 /**
@@ -259,7 +227,6 @@ function Render() {
 	g_context.fillText(MoneyStr(g_bank_balance), g_canvas.width - 4, g_canvas.height - 4);
 
 	// Draw GUI
-	DrawCursor();
 	DrawWindows();
 
 	if (IsIntroWindowOpen()) {

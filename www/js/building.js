@@ -76,6 +76,11 @@ function GenerateBuildings() {
 		y: 16 + 12 * 32,
 	});
 	g_town_buildings.push(g_hq);
+
+ 	// Create a nav overlay for all buildings in the DOM
+	for(var i = 0; i < g_town_buildings.length; i++) {
+		AddNavOverlayBuilding(g_town_buildings[i]);
+	}
 }
 
 /**

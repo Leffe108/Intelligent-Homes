@@ -21,15 +21,47 @@
 }
 
 /* --- GUI --- */
-#gui-overlay {
+#gui-window-overlay, #gui-nav-overlay, #gui-game-over-overlay {
 	position: absolute;
 	width: 512px;
 	height: 480px;
 	top: 0;
 	left: 0;
+}
+#gui-nav-overlay, #gui-game-over-overlay {
 	z-index: 2;
 }
+#gui-window-overlay {
+	z-index: 3;
+}
 
+/* Nav overlay */
+#gui-nav-overlay ul, #gui-nav-overlay li {
+	list-style-type: none;
+}
+.gui-nav-overlay-building {
+	position: absolute;
+	background-color: transparent;
+	border: none;
+}
+.gui-nav-overlay-building a {
+	display: block;
+	width: 32px;
+	height: 32px;
+	cursor: pointer;
+}
+
+/* Game over overlay */
+#gui-game-over-overlay a.play-again {
+	position: absolute;
+	background-color: transparent;
+	display: block;
+	width: 512px;
+	height: 480px;
+	cursor: pointer;
+}
+
+/* Windows */
 .window {
 	position: absolute;
 	width: 384px;

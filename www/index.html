@@ -33,8 +33,14 @@
 		<br/>This is an updated version
 		<br/><br/>
 		<script src="js/jquery-1.11.1.min.js"></script>
-		<div id="game">
-			<div id="gui-overlay" class="hidden" aria-live="polite"></div>
+		<div id="game" role="main">
+			<div id="gui-nav-overlay" class="hidden">
+				<ul data-building-type="home"></ul>
+				<ul data-building-type="work"></ul>
+				<ul data-building-type="hq"></ul>
+			</div>
+			<div id="gui-window-overlay" class="hidden" aria-live="polite"></div>
+			<div id="gui-game-over-overlay" class="hidden"></div>
 		</div>
 
 		<!-- Individual files -->

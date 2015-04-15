@@ -10,6 +10,10 @@ var SELL_100_COST = 4000;
 
 var BOTTOM_WINDOW_Z = 10; ///< z-index of the window displayed at the bottom of the open window stack.
 
+var OVERLAY_NAV = 1;
+var OVERLAY_WINDOWS = 2;
+var OVERLAY_GAME_OVER = 3;
+
 /**
  * Creates an animation.
  *
@@ -57,6 +61,65 @@ function DrawAnimations() {
 function InitGUI() {
 	g_animations = [];
 	g_open_windows = [];
+
+	InitGameOverOverlay();
+}
+
+/**
+ * @param overlay OVERLAY_WINDOWS or OVERLAY_NAV
+ */
+function SwitchOverlay(overlay) {
+	$('#gui-nav-overlay').addClass('hidden');
+	$('#gui-window-overlay').addClass('hidden');
+	$('#gui-game-over-overlay').addClass('hidden');
+	if (overlay === OVERLAY_WINDOWS) {
+		$('#gui-window-overlay').removeClass('hidden');
+		$('#gui-window-overlay').focus();
+	} else if (overlay == OVERLAY_NAV) {
+		$('#gui-nav-overlay').removeClass('hidden');
+		$('#gui-nav-overlay').focus();
+	} else if (overlay == OVERLAY_GAME_OVER) {
+		$('#gui-game-over-overlay').removeClass('hidden');
+		$('#gui-game-over-overlay a.play-again').focus();
+	}
+}
+
+/**
+ * Add a nav overlay element for given building
+ */
+function AddNavOverlayBuilding(building, index) {
+	var container = $('#gui-nav-overlay').find('ul[data-building-type=' + building.type + ']');
+	var li = $('<li class="gui-nav-overlay-building">');
+	var a = $('<a tabindex="0">');
+	a.on('click', function() {
+		ShowWindow(GetBuildingWindow(building));
+	});
+	a.on('keypress', OnLinkKeypress);
+	var name = 'Building: ';
+	if (building.type == "home") {
+		name += "Home";
+	} else if (building.type == "work") {
+		name += "Work";
+	} else if (building.type == "hq") {
+		name += "Headquarters";
+	} else {
+		throw new Exception("Bad house type");
+	}
+	a.attr('title', name);
+	li.css('left', building.x - 16);
+	li.css('top', building.y - 16);
+	li.append(a);
+	container.append(li);
+}
+
+function InitGameOverOverlay() {
+	var a = $('<a tabindex="0" class="play-again">');
+	a.on('click', function() {
+		location.reload(); // Reload page
+	});
+	a.on('keypress', OnLinkKeypress);
+	a.attr('title', 'Play again');
+	$('#gui-game-over-overlay').append(a);
 }
 
 /**
@@ -67,27 +130,14 @@ function IsIntroWindowOpen() {
 }
 
 /**
- * Draw cursor
+ * Is the game over overlay active?
  */
-function DrawCursor() {
+function IsGameOverOverlayActive() {
+	return !$('#gui-game-over-overlay').hasClass('hidden');
 }
 
-/**
- * Handle cursor hoover + click on buildings.
- */
-function UpdateCursor() {
-	if (g_open_windows.length > 0) return;
-
-	for (var i = 0; i < g_town_buildings.length; i++) {
-		var building = g_town_buildings[i];
-		building.hoover = IsInBox(g_mouse_x, g_mouse_y, building.x - 16, building.y - 16, 32, 32);
-
-		// Clicked on building?
-		if (building.hoover && 0 in g_mouse_down) {
-			ShowWindow(GetBuildingWindow(building));
-			delete g_mouse_down[0];
-		}
-	}
+function HasOpenWindows() {
+	return g_open_windows.length > 0;
 }
 
 /**
@@ -216,7 +266,9 @@ function GetIntroWindow() {
  * Show a window
  */
 function ShowWindow(w) {
-	if (g_open_windows.length == 0) $('#gui-overlay').removeClass('hidden');
+	if (g_open_windows.length == 0) {
+		SwitchOverlay(OVERLAY_WINDOWS);
+	}
 	RenderWindowHtml(w);
 	g_open_windows.push(w);
 }
@@ -228,7 +280,9 @@ function CloseTopWindow() {
 	if (g_open_windows.length == 0) return;
 	$(g_open_windows[g_open_windows.length-1].dom_node).remove();
 	g_open_windows.pop();
-	if (g_open_windows.length == 0) $('#gui-overlay').addClass('hidden');
+	if (g_open_windows.length == 0) {
+		SwitchOverlay(OVERLAY_NAV);
+	}
 }
 
 /**
@@ -294,26 +348,22 @@ function RenderWindowHtml(w) {
 	$(window_div).children('.wid-close').children('.close').on('click', function() {
 		$(this).parent().parent().remove();
 		g_open_windows.pop();
-		if (g_open_windows.length == 0) $('#gui-overlay').addClass('hidden');
+		if (g_open_windows.length == 0) {
+			SwitchOverlay(OVERLAY_NAV);
+		}
 	});
 	$(window_div).children('.wid-cost-action').children('.do-it').on('click', function() {
 		var widget_name = $(this).parent().attr('data-wid-name');
 		var widget_type = $(this).parent().attr('data-wid-type');
 		WidgetAction(w, widget_name, widget_type);
 	});
-	$(window_div).find('a').on('keypress', function(e) {
-		var key = e.which;
-		if (key == 13) { // enter
-			this.click();
-			return false;
-		}
-	});
+	$(window_div).find('a').on('keypress', OnLinkKeypress);
 
 	// Make new window appear ontop of any existing window
 	// on screen.
 	$(window_div).css('z-index', BOTTOM_WINDOW_Z + g_open_windows.length);
 	
-	var overlay = document.getElementById('gui-overlay');
+	var overlay = document.getElementById('gui-window-overlay');
 	overlay.appendChild(window_div);
 	w.dom_node = window_div;
 }
@@ -463,5 +513,18 @@ function WidgetAction(w, widget_name, widget_type) {
 					break;
 			}
 			break;
+	}
+}
+
+/**
+ * Keypress event handler aimed at <a> tags
+ * that trigger click() event upon hitting
+ * enter key if the link is focused.
+ */
+function OnLinkKeypress(e) {
+	var key = e.which;
+	if (key == 13) { // enter
+		this.click();
+		return false;
 	}
 }
